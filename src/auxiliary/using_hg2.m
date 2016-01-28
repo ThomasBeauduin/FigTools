@@ -1,17 +1,11 @@
-%USING_HG2 Determine if the HG2 graphics engine is used
+function tf = using_hg2(fig)
+%USING_HG2 - Determine if the HG2 graphics engine is used.
 %
 %   tf = using_hg2(fig)
-%
-%IN:
 %   fig - handle to the figure in question.
+%   tf - boolean, HG2 graphics engine used or not
 %
-%OUT:
-%   tf - boolean indicating whether the HG2 graphics engine is being used
-%        (true) or not (false).
 
-% 19/06/2015 - Suppress warning in R2015b; cache result for improved performance
-
-function tf = using_hg2(fig)
     persistent tf_cached
     if isempty(tf_cached)
         try

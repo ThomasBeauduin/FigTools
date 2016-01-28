@@ -45,8 +45,6 @@ methods (Hidden, Access = private)
 end
 
 % Public Properties
-% consider removing title and labels, only handles to these
-% consider removing limits
 properties (Dependent = true)
     FigDim, AxisBox
     XTick, XTickLabel
@@ -70,20 +68,27 @@ properties(Hidden, SetAccess = private)
     hplot, nrofp                % chart obj
     hline, nrofl                % primitive line obj
     htitle, hxlabel             % label obj
-    hylabel, hzlabel            % 
+    hylabel, hzlabel
 end
     
 methods
     function cls = pubfig(hfig)
     cls.hfig = hfig;
-    hAllAxis = findobj(cls.hfig,'type','axes');
-    cls.hleg = findobj(hAllAxis,'tag','legend');
-    cls.haxis = setdiff(hAllAxis,cls.hleg);
+    if ~using_hg2(hfig)     % before 2014b
+        hAllAxis = findobj(cls.hfig,'type','axes');
+        cls.hleg = findobj(hAllAxis,'tag','legend');
+        cls.haxis = setdiff(hAllAxis,cls.hleg);
+        hAllText = findobj(cls.hfig,'Type','Text');
+        cls.htext = setdiff(hAllText,cls.hleg);
+    else                    % after 2014b
+        cls.haxis = findobj(cls.hfig,'type','axes');
+        cls.hleg = findobj(cls.hfig,'type','legend');
+        cls.htext = findobj(cls.hfig,'Type','Text');
+    end
     cls.nrofa = length(cls.haxis);
-    hAllText = findobj(cls.hfig,'Type','Text');
-    cls.htext = setdiff(hAllText,cls.hleg);
     cls.nroft = length(cls.htext);
-    for k=1:cls.nrofa
+    
+    for k=1:cls.nrofa       % axis data objects
         cls.hplot = [cls.hplot;get(cls.haxis(k), 'Children')];
         cls.nrofp(k) = length( get(cls.haxis(k), 'Children'));
         cls.hline = [cls.hline;findobj(cls.haxis(k),'Type','Line')];
