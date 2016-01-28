@@ -1,47 +1,59 @@
-# Windows image file caches
+# FigTools Specific #
+#####################
+examples\figs
+*.pdf
+*.eps
+*.png
+*.bmp
+
+# Matlab #
+##########
+*.asv						# Windows default autosave
+*.mex*						# Compiled MEX binaries
+slprj/						# Simulink Code Generation
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.log
+
+# Packages #
+############
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
+
+# OS generated files #
+######################
+ehthumbs.db					# Windows image file caches
 Thumbs.db
-ehthumbs.db
-
-# Folder config file
-Desktop.ini
-
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-# Windows Installer files
-*.cab
+Desktop.ini					# Folder config file
+$RECYCLE.BIN/				# Recycle Bin used on file shares
+*.cab						# Windows Installer files
 *.msi
 *.msm
 *.msp
-
-# Windows shortcuts
-*.lnk
-
-# =========================
-# Operating System Files
-# =========================
-
-# OSX
-# =========================
-
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Thumbnails
-._*
-
-# Files that might appear in the root of a volume
-.DocumentRevisions-V100
+*.lnk						# Windows shortcuts
+._*							# Thumbnails
+.DocumentRevisions-V100		# Volume root files
 .fseventsd
 .Spotlight-V100
 .TemporaryItems
 .Trashes
 .VolumeIcon.icns
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
