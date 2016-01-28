@@ -1,6 +1,5 @@
 # FigTools Specific #
 #####################
-examples\figs
 *.pdf
 *.eps
 *.png
