@@ -1,4 +1,4 @@
-function [imageData] = expfig(varargin)
+function [path] = expfig(varargin)
 %EXPFIG - Exports figures in a publication-quality format.
 %
 % filename      - export filename without extension (string).
@@ -12,13 +12,12 @@ function [imageData] = expfig(varargin)
 % -q<val>       - optional quality settings value (bitmap).
 % -p<val>       - optional border box padding (percentage). 
 % handle        - handle of figure object to export.
-% imageData     - MxNxC uint8 image array of the exported image.
 %
 % Author: Thomas Beauduin, The University of Tokyo, 2016
 
 drawnow; pause(0.05);
 fig = get(0, 'CurrentFigure');
-[fig, options] = parse_args(nargout, fig, varargin{:});
+[fig,options] = parse_args(nargout, fig, varargin{:});
 
 if isequal(fig,-1),  return;                % Ensure figure handle
 elseif isempty(fig), error('No figure found');
@@ -50,12 +49,10 @@ if isbitmap(options)
 
     if options.png                                      % 5. generate image
         res = options.magnify * get(0, 'ScreenPixelsPerInch') / 25.4e-3;
-        imwrite(A,[options.name '.png'],'ResolutionUnit','meter',...
+        imwrite(A,[options.name,'.png'],'ResolutionUnit','meter',...
                                       'XResolution',res,'YResolution',res);
     end
-    if options.bmp, imwrite(A, [options.name '.bmp']); end
-    
-    if options.im, imageData = A; end                   % data output
+    if options.bmp, imwrite(A, [options.name,'.bmp']); end
 end
 
 % PART 2
@@ -116,6 +113,14 @@ if isvector(options)
         end
     end
 end
+
+% PART 3
+% Output path to created files
+path=[];
+if options.png, path=[path;strcat(pwd,options.name,'.png')]; end
+if options.bmp, path=[path;strcat(pwd,options.name,'.bmp')]; end
+if options.pdf, path=[path;strcat(pwd,options.name,'.pdf')]; end
+if options.eps, path=[path;strcat(pwd,options.name,'.eps')]; end
 end
 
 function [fig, options] = parse_args(nout, fig, varargin)
