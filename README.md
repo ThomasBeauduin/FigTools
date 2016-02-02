@@ -28,6 +28,7 @@ to figure creation:
 
 The different steps in figure creation are described in this section.
 For detailed examples refer to the example folder based on matlab graphical gallery.
+Don't hesitate to post issues!
 
 ## Generate Figure
 
