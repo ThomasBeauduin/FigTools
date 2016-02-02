@@ -56,6 +56,3 @@ http://www.mathworks.com/help/matlab/graphics-object-properties.html
 Note: the toolbox was created and tested for typical eletrical and mechanical
 engineering graphics; some research fields may have very different publication
 figure requirements.
-
-# test by ohnihsi
-test 
