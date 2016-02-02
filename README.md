@@ -20,9 +20,9 @@ font, setting colorspace and getting the right file type and resolution.
 The toolbox is based on the concept of a natural three-step approach
 to figure creation:
 
-1. **Generate:** (matfig-obj) generate plotting and graphical data.
-2. **Publish:** (pubfig-obj) publication layout & visual fine-tuning.
-3. **Export:** (expfig-obj) export creation as-on-screen to bitmap/vector.
+1. **Generate:** generate plotting and graphical data (matfig-obj).
+2. **Publish:** publication layout & visual fine-tuning (pubfig-obj).
+3. **Export:** export creation as-on-screen to bitmap/vector (expfig-obj).
 
 # Description
 
