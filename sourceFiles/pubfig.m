@@ -247,6 +247,7 @@ methods
     function set.LegendOrient(cls, LegendOrient)
         if ~isempty(cls.hleg)
             set(cls.hleg, 'Orientation', LegendOrient);
+            set(cls.hleg,'FontSize',cls.FontSize);
         end
     end
     

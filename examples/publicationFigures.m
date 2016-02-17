@@ -21,7 +21,7 @@ hfig=pubfig(hfig)
 expfig('figs\ex1_basicPlot','-pdf','-png','-bmp','-eps',hfig);
 
 %% Example 2: bode plot
-load('ex2_bodePlot.mat');
+load('data\ex2_bodePlot.mat');
 
 fig=figure;
 subplot(211); 

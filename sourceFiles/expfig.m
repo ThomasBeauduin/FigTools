@@ -23,7 +23,7 @@ if isequal(fig,-1),  return;                % Ensure figure handle
 elseif isempty(fig), error('No figure found');
 end
 
-set(fig,'Units','pixels');                  % Ghostscript crash if pixels
+set(fig,'Units','pixels');                  % Ghostscript crash otherwise
 set(fig, 'InvertHardcopy', 'off');
 
 switch options.renderer                     % Set the renderer
@@ -112,6 +112,9 @@ if isvector(options)
             delete(pdf_nam);    % Delete the pdf
         end
     end
+    if options.emf              % Generate emf from pdf
+        print(options.name,'-dmeta',sprintf('-r%d',600));
+    end
 end
 
 % PART 3
@@ -121,6 +124,7 @@ if options.png, path=[path;strcat(pwd,options.name,'.png')]; end
 if options.bmp, path=[path;strcat(pwd,options.name,'.bmp')]; end
 if options.pdf, path=[path;strcat(pwd,options.name,'.pdf')]; end
 if options.eps, path=[path;strcat(pwd,options.name,'.eps')]; end
+if options.emf, path=[path;strcat(pwd,options.name,'.emf')]; end
 end
 
 function [fig, options] = parse_args(nout, fig, varargin)
@@ -134,6 +138,7 @@ options = struct(...
     'eps', false, ...
     'png', false, ...
     'bmp', false, ...
+    'emf', false, ...
     'colourspace', 0, ... % 0:RGB, 1:CMYK, 2:gray
     'im', nout == 1, ...
     'aa_factor', 0, ...
@@ -155,9 +160,11 @@ for a = 1:nargin-2
                 case 'eps',     options.eps = true;
                 case 'png',     options.png = true;
                 case 'bmp',     options.bmp = true;
+                case 'emf',     options.emf = true;    
                 case 'rgb',     options.colourspace = 0;
                 case 'cmyk',    options.colourspace = 1;
                 case 'grey',    options.colourspace = 2;
+                case 'gray',    options.colourspace = 2;    
                 otherwise
                     if strcmpi(varargin{a}(1:2),'-d')
                         varargin{a}(2) = 'd';
@@ -182,6 +189,7 @@ for a = 1:nargin-2
                 case '.bmp', options.bmp = true;
                 case '.eps', options.eps = true;
                 case '.pdf', options.pdf = true;
+                case '.emf', options.pdf = true;
                 otherwise,   options.name = varargin{a};
             end
         end
@@ -254,7 +262,7 @@ function A = check_greyscale(A)
 end
 
 function b = isvector(options)
-    b = options.pdf || options.eps;
+    b = options.pdf || options.eps || options.emf;
 end
 
 function b = isbitmap(options)
