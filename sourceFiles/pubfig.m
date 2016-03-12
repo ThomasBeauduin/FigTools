@@ -120,11 +120,11 @@ methods
     function set.FontSize(cls, FontSize)
         set(cls.hleg,'FontSize',FontSize);
         for k=1:cls.nrofa
-            set(cls.htitle(k), 'FontSize', FontSize+1);
-            set(cls.hxlabel(k),'FontSize', FontSize);
-            set(cls.hylabel(k),'FontSize', FontSize);
-            set(cls.hzlabel(k),'FontSize', FontSize);
-            set(cls.haxis(k),'FontSize',FontSize-1);
+            set(cls.htitle(k) , 'FontSize', FontSize+1);
+            set(cls.hxlabel(k), 'FontSize', FontSize);
+            set(cls.hylabel(k), 'FontSize', FontSize);
+            set(cls.hzlabel(k), 'FontSize', FontSize);
+            set(cls.haxis(k)  , 'FontSize', FontSize-1);
         end
         set(cls.htext,'FontSize',FontSize);
     end
@@ -148,8 +148,11 @@ methods
         end
     end
     function set.XTick(cls, XTick)
-        for k=1:cls.nrofa
-            set(cls.haxis(k),'XTick',XTick{k});
+        try
+            for k=1:cls.nrofa
+                set(cls.haxis(k),'XTick',XTick{k});
+            end
+        catch
         end
     end
     function set.YTick(cls, YTick)
