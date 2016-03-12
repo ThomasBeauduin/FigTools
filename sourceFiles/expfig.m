@@ -113,6 +113,7 @@ if isvector(options)
         end
     end
     if options.emf              % Generate emf from pdf
+ % https://wiki.iac.ethz.ch/IT/LinuxConvertFiles#Convert_Matlab_EPS_Files
         print(options.name,'-dmeta',sprintf('-r%d',600));
     end
 end
