@@ -25,7 +25,7 @@ methods (Hidden, Access = private)
         fig.FigDim          = [20 14];
         fig.FontSize        = 14;
         fig.FontName        = 'Times New Roman';
-        fig.Interpreter     = 'latex';
+        fig.Interpreter     = 'tex';
         fig.LineWidth       = 2.2;
         fig.AxisBox         = 'on';
         fig.LegendBox       = 'on';
@@ -115,8 +115,16 @@ methods
         set(gcf,'color', [1, 1, 1]);
     end
     function set.FontName(cls, FontName)
-             set(cls.haxis, 'FontName', FontName);
-        end      
+        set(cls.hleg,'FontName', FontName);
+        for k=1:cls.nrofa
+            set(cls.htitle(k) , 'FontName', FontName);
+            set(cls.hxlabel(k), 'FontName', FontName);
+            set(cls.hylabel(k), 'FontName', FontName);
+            set(cls.hzlabel(k), 'FontName', FontName);
+            set(cls.haxis(k)  , 'FontName', FontName);
+        end
+        set(cls.htext,'FontName', FontName);
+    end
     function set.FontSize(cls, FontSize)
         set(cls.hleg,'FontSize',FontSize);
         for k=1:cls.nrofa
@@ -129,14 +137,47 @@ methods
         set(cls.htext,'FontSize',FontSize);
     end
     function set.Interpreter(cls, Interpreter)
-        set(cls.hleg, 'Interpreter',Interpreter);
-        for k=1:cls.nrofa
-            set(cls.htitle(k), 'Interpreter',Interpreter);
-            set(cls.hxlabel(k),'Interpreter',Interpreter);
-            set(cls.hylabel(k),'Interpreter',Interpreter);
-            set(cls.hzlabel(k),'Interpreter',Interpreter);
+        lc1=get(cls.hleg,'string');     %hleg string is cell
+        for k=1:length(lc1)
+            lc2=lc1{k};                 %multi-axis = multi-cell
+            if iscell(lc2)
+                for j=1:length(lc2)
+                    if isempty(strfind(lc2{j},'$')) == 0
+                            set(cls.hleg,'Interpreter','latex'); break
+                    else    set(cls.hleg,'Interpreter',Interpreter);
+                    end
+                end
+            else
+                if isempty(strfind(lc2,'$')) == 0
+                        set(cls.hleg,'Interpreter','latex'); break
+                else    set(cls.hleg,'Interpreter',Interpreter);
+                end
+            end
         end
-        set(cls.htext, 'Interpreter',Interpreter);
+        for k=1:cls.nrofa
+            if isempty(strfind(get(cls.htitle(k),'string'),'$')) == 0
+                    set(cls.htitle(k), 'Interpreter','latex');
+            else    set(cls.htitle(k), 'Interpreter',Interpreter);
+            end
+            if isempty(strfind(get(cls.hxlabel(k),'string'),'$')) == 0
+                    set(cls.hxlabel(k), 'Interpreter','latex');
+            else    set(cls.hxlabel(k), 'Interpreter',Interpreter);
+            end
+            if isempty(strfind(get(cls.hylabel(k),'string'),'$')) == 0
+                    set(cls.hylabel(k), 'Interpreter','latex');
+            else    set(cls.hylabel(k), 'Interpreter',Interpreter);
+            end
+            if isempty(strfind(get(cls.hzlabel(k),'string'),'$')) == 0
+                    set(cls.hzlabel(k), 'Interpreter','latex');
+            else    set(cls.hzlabel(k), 'Interpreter',Interpreter);
+            end
+        end
+        for k=1:length(cls.htext)
+            if isempty(strfind(get(cls.htext(k),'string'),'$')) == 0
+                    set(cls.htext(k), 'Interpreter','latex');
+            else    set(cls.htext(k), 'Interpreter',Interpreter);
+            end
+        end
     end
     function set.AxisBox(cls, AxisBox)
         if iscell(AxisBox)~=1, AxisBoxCell{1}=AxisBox;
