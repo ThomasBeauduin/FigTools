@@ -155,9 +155,12 @@ methods
             end
         end
         for k=1:cls.nrofa
-            if isempty(strfind(get(cls.htitle(k),'string'),'$')) == 0
-                    set(cls.htitle(k), 'Interpreter','latex');
-            else    set(cls.htitle(k), 'Interpreter',Interpreter);
+            title=get(cls.htitle(k),'string');
+            for j=1:size(title,1)
+                if isempty(strfind(title(j,:),'$')) == 0
+                        set(cls.htitle(k), 'Interpreter','latex');
+                else    set(cls.htitle(k), 'Interpreter',Interpreter);
+                end
             end
             if isempty(strfind(get(cls.hxlabel(k),'string'),'$')) == 0
                     set(cls.hxlabel(k), 'Interpreter','latex');
@@ -404,9 +407,3 @@ methods
     end
 end
 end
-
-%EXTENSION for subplot axis alignment
-% xpos = -18 % (find this out from get(yl,'pos') on the desired label x-location)
-% yl=ylabel('Label Here')
-% pos=get(yl,'Pos')
-% set(yl,'Pos',[xpos pos(2) pos(3)])
