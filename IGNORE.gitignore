@@ -5,7 +5,7 @@
 *.png             # raster figure file
 *.bmp
 *.jpg
-".txt						# ghostscript temp files
+*.txt						# ghostscript temp files
 
 ### Matlab
 *.asv						# Windows default autosave
