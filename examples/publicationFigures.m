@@ -18,7 +18,7 @@ plot(x,y);
     xlabel('time [s]')
     legend('$y=sin(x)$')
 hfig=pubfig(hfig)
-expfig('figs\ex1_basicPlot','-pdf','-png','-bmp','-eps',hfig);
+expfig('ex1_basicPlot','-pdf','-png','-bmp','-eps',hfig);
 
 %% Example 2: bode plot
 load('data\ex2_bodePlot.mat');
@@ -38,7 +38,7 @@ subplot(212);
 hfig=pubfig(fig)
     hfig.YTick={'','deg'};
     hfig.XMinorGrid='on';
-expfig('figs\ex2_bodePlot','-pdf',hfig);
+expfig('ex2_bodePlot','-pdf',hfig);
 
 %% Example 3: DoublePlot
 x = 0:pi/1000:2*pi; y = sin(x); y2 = cos(x.^2);
@@ -50,7 +50,7 @@ haxis=plotyy(x,y,x,y2);
     ylabel(haxis(2),'$sin(x^2)$')
     xlabel('time [s]')
 hfig=pubfig(hfig)
-expfig('figs\ex3_DoublePlot','-pdf',hfig);
+expfig('ex3_DoublePlot','-pdf',hfig);
 
 %% Example 4: Scatter
 load seamount x y z
@@ -62,7 +62,7 @@ scatter(x, y, 10, z, 'filled')
     ylabel('Latitude')
     colorbar
 hfig=pubfig(hfig)
-expfig('figs\ex4_scatter','-pdf',hfig);
+expfig('ex4_scatter','-pdf',hfig);
 
 %% Example 5: Multi-Axis
 t=linspace(0,2*pi); t(1)=eps; y=sin(t);
@@ -84,7 +84,7 @@ hfig=pubfig(hfig);
     hfig.AxisBox='off';
     hfig.XGrid='off'; 
     hfig.YGrid='off';
-expfig('figs\ex5_multiaxis','-pdf',hfig);
+expfig('ex5_multiaxis','-pdf',hfig);
 
 %% Example 6: Latex equations
 for i=1:12, fib(i) = (((1+sqrt(5))/2)^i - ((1-sqrt(5))/2)^i)/sqrt(5); end
@@ -100,7 +100,7 @@ hfig=figure; plot(1:12, fib, 'k^-')
 hfig=pubfig(hfig)
     hfig.XGrid='off';    
     hfig.YGrid='off';
-expfig('figs\ex6_latexEq','-pdf',hfig);
+expfig('ex6_latexEq','-pdf',hfig);
 
 %% Example 7: Subplots
 fm=20e3; fc=100e3; 
@@ -128,7 +128,7 @@ subplot(224)
     title('Reconstruction')
 hfig=pubfig(hfig)
     hfig.LineWidth=[0.5;2.2;2.2];
-expfig('figs\ex7_subPlot','-pdf',hfig);
+expfig('ex7_subPlot','-pdf',hfig);
 
 %% Example 8: high complexity
 load data\ex8_complex xfit yfit xdata_m ydata_m ydata_s xVdata ...
@@ -159,7 +159,7 @@ hfig=pubfig(hfig)
     hfig.YMinorTick = 'on';
     hfig.YGrid = 'on';
     hfig.YTick = {(0:500:2500)};
-expfig('figs\ex8_complex','-pdf',hfig);
+expfig('ex8_complex','-pdf',hfig);
 
 %% Example 9: 3d plot
 load data\ex9_3dplot masscharge time spectra
@@ -173,7 +173,7 @@ hfig=figure; plot3(masscharge,time,spectra)
     zlabel('Ion Spectra')
     title('Extracted Spectra Subset')
 hfig=pubfig(hfig);
-expfig('figs\ex9_plot3d','-pdf',hfig);
+expfig('ex9_plot3d','-pdf',hfig);
 
 %% Example 10: linetext
 load data\ex10_linePlot points x y
@@ -196,7 +196,7 @@ plot(x, y), axis([.5 7 -.8 1.8])
     yt = points(5,2) - 0.05;
     text(6.1,.5, 'Point 5')
 hfig=pubfig(hfig)
-expfig('figs\ex10_linePlot','-pdf',hfig);
+expfig('ex10_linePlot','-pdf',hfig);
 
 %% Example 11: Surface-Contour plot
 y = -10:0.5:10; x = -10:0.5:10;
@@ -211,7 +211,7 @@ surfc(X, Y, Z)
     ylabel('y')
     zlabel('z')
 hfig=pubfig(hfig);
-expfig('figs\ex11_surface','-pdf',hfig);
+expfig('ex11_surface','-pdf',hfig);
 
 %% Example 12: combine
 load data\ex12_fitting x y yfit
@@ -225,4 +225,4 @@ line(x, yfit - 0.3, 'Color', 'r', 'LineStyle', '--')
     xlabel('Time')
     ylabel('Noisy Data')
 hfig=pubfig(hfig);
-expfig('figs\ex12_fitting','-pdf','-p0.2',hfig);
+expfig('ex12_fitting','-pdf','-p0.2',hfig);
