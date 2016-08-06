@@ -48,11 +48,21 @@ if isbitmap(options)
     end
 
     if options.png                                      % 5. generate image
+        if exist(strcat(pwd,'/plot/png'),'dir') == 0
+            mkdir('plot/png');
+        end
         res = options.magnify * get(0, 'ScreenPixelsPerInch') / 25.4e-3;
         imwrite(A,[options.name,'.png'],'ResolutionUnit','meter',...
                                       'XResolution',res,'YResolution',res);
     end
-    if options.bmp, imwrite(A, [options.name,'.bmp']); end
+    
+    if options.bmp
+        if exist(strcat(pwd,'/plot/bmp'),'dir') == 0
+            mkdir('plot/bmp');
+        end
+        bmp_nam = ['plot/bmp/',options.name,'.bmp'];
+        imwrite(A, bmp_nam); 
+    end
 end
 
 % PART 2
@@ -75,9 +85,13 @@ if isvector(options)
     end
     if isTempDirOk, pdf_nam_tmp = [tempname '.pdf'];
     else            pdf_nam_tmp = fullfile(fpath,[fname '.pdf']);
-    end    
+    end
+    
     if options.pdf                      % generate pdf
-        pdf_nam = [options.name '.pdf'];
+        if exist(strcat(pwd,'/plot/pdf'),'dir') == 0
+            mkdir('plot/pdf');
+        end
+        pdf_nam = ['plot/pdf/' options.name '.pdf'];
         try copyfile(pdf_nam, pdf_nam_tmp, 'f'); catch, end
     else
         pdf_nam = pdf_nam_tmp;
@@ -97,10 +111,14 @@ if isvector(options)
     delete(tmp_nam);
 
     if options.eps              % Generate eps from pdf
+        if exist(strcat(pwd,'/plot/eps'),'dir') == 0
+            mkdir('plot/eps');
+        end
         try
             eps_nam_tmp = strrep(pdf_nam_tmp,'.pdf','.eps');
             pdf2eps(pdf_nam, eps_nam_tmp);
-            movefile(eps_nam_tmp,  [options.name '.eps'], 'f');
+            eps_nam = ['plot/eps/' options.name '.eps'];
+            movefile(eps_nam_tmp, eps_nam, 'f');
         catch ex
             if ~options.pdf
                 delete(pdf_nam); % Delete the pdf
@@ -112,20 +130,34 @@ if isvector(options)
             delete(pdf_nam);    % Delete the pdf
         end
     end
+    
     if options.emf              % Generate emf from pdf
- % https://wiki.iac.ethz.ch/IT/LinuxConvertFiles#Convert_Matlab_EPS_Files
-        print(options.name,'-dmeta',sprintf('-r%d',600));
+        if exist(strcat(pwd,'/plot/emf'),'dir') == 0
+            mkdir('plot/emf');
+        end
+        emf_nam = ['plot/emf/' options.name '.emf'];
+        print(emf_nam,'-dmeta',sprintf('-r%d',600));
+    end
+    
+    if options.fig
+        if exist(strcat(pwd,'/plot/fig'),'dir') == 0
+            mkdir('plot/fig');
+        end
+        fig_nam = ['plot/fig/' options.name '.fig'];
+        savefig(fig,fig_nam);
     end
 end
+% https://wiki.iac.ethz.ch/IT/LinuxConvertFiles#Convert_Matlab_EPS_Files
 
 % PART 3
 % Output path to created files
 path=[];
-if options.png, path=[path;strcat(pwd,options.name,'.png')]; end
-if options.bmp, path=[path;strcat(pwd,options.name,'.bmp')]; end
-if options.pdf, path=[path;strcat(pwd,options.name,'.pdf')]; end
-if options.eps, path=[path;strcat(pwd,options.name,'.eps')]; end
-if options.emf, path=[path;strcat(pwd,options.name,'.emf')]; end
+if options.png, path=[path;strcat(pwd,png_nam)]; end
+if options.bmp, path=[path;strcat(pwd,bmp_nam)]; end
+if options.pdf, path=[path;strcat(pwd,pdf_nam)]; end
+if options.eps, path=[path;strcat(pwd,eps_nam)]; end
+if options.emf, path=[path;strcat(pwd,emf_nam)]; end
+if options.fig, path=[path;strcat(pwd,fig_nam)]; end
 end
 
 function [fig, options] = parse_args(nout, fig, varargin)
@@ -140,6 +172,7 @@ options = struct(...
     'png', false, ...
     'bmp', false, ...
     'emf', false, ...
+    'fig', true, ...
     'colourspace', 0, ... % 0:RGB, 1:CMYK, 2:gray
     'im', nout == 1, ...
     'aa_factor', 0, ...
@@ -161,7 +194,8 @@ for a = 1:nargin-2
                 case 'eps',     options.eps = true;
                 case 'png',     options.png = true;
                 case 'bmp',     options.bmp = true;
-                case 'emf',     options.emf = true;    
+                case 'emf',     options.emf = true;
+                case 'fig',     options.fig = true;
                 case 'rgb',     options.colourspace = 0;
                 case 'cmyk',    options.colourspace = 1;
                 case 'grey',    options.colourspace = 2;
@@ -190,7 +224,8 @@ for a = 1:nargin-2
                 case '.bmp', options.bmp = true;
                 case '.eps', options.eps = true;
                 case '.pdf', options.pdf = true;
-                case '.emf', options.pdf = true;
+                case '.emf', options.emf = true;
+                case '.fig', options.fig = true;
                 otherwise,   options.name = varargin{a};
             end
         end
@@ -263,7 +298,7 @@ function A = check_greyscale(A)
 end
 
 function b = isvector(options)
-    b = options.pdf || options.eps || options.emf;
+    b = options.pdf || options.eps || options.emf || options.fig; 
 end
 
 function b = isbitmap(options)
