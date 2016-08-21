@@ -144,7 +144,7 @@ if isvector(options)
             mkdir('plot/fig');
         end
         fig_nam = ['plot/fig/' options.name '.fig'];
-        savefig(fig,fig_nam);
+        saveas(fig,fig_nam,'fig');
     end
 end
 % https://wiki.iac.ethz.ch/IT/LinuxConvertFiles#Convert_Matlab_EPS_Files
