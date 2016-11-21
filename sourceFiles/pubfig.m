@@ -11,6 +11,11 @@ classdef pubfig < handle
 %
 % Author: Thomas Beauduin, The University of Tokyo, 2016
 
+% =============
+% Note: add style 'file' to input options so that the user
+% has his own set of defaultPropoerties(fig) with diff between
+% paper (tex.sty) and presentation (ppt.sty)
+% =============
 % Version: 1.0
 % additional work:
 %   * align multiplot axis labels
