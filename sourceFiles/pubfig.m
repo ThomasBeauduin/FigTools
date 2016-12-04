@@ -114,8 +114,8 @@ methods
     function set.FigDim(cls, value)
         set(cls.hfig,'Units', 'centimeters');
         set(0,'Units','centimeters');
-        monitorSize = get(0,'MonitorPositions');
-        pos = [monitorSize(3)/2-value(1)/2, monitorSize(4)/2-value(2)*2/3];
+        monitor = get(0,'MonitorPositions');
+        pos = [monitor(1,3)/2-value(1)/2, monitor(1,4)/2-value(2)*2/3];
         set(cls.hfig,'Position', [pos(1) pos(2) value(1) value(2)]);
         set(gcf,'color', [1, 1, 1]);
     end
