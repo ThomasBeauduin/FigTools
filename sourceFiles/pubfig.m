@@ -288,7 +288,13 @@ methods
     end
     function set.LegendLoc(cls, LegendLoc)
         if ~isempty(cls.hleg)
-            set(cls.hleg, 'location', LegendLoc);
+            if iscell(LegendLoc)
+                for k=1:length(cls.hleg)
+                    set(cls.hleg(k), 'location', LegendLoc{length(cls.hleg)+1-k});
+                end
+            else
+                set(cls.hleg, 'location', LegendLoc);
+            end
         end
     end
     function set.LegendPos(cls, LegendPos)
