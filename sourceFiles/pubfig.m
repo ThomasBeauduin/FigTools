@@ -33,6 +33,7 @@ methods (Hidden, Access = private)
         fig.Interpreter     = 'latex';
         fig.LineWidth       = 2.2;
         fig.AxisBox         = 'on';
+        fig.AxisWidth       = 1.5;
         fig.LegendBox       = 'on';
         fig.LegendLoc       = 'northeast';
         fig.LegendOrient    = 'vertical';
@@ -51,7 +52,8 @@ end
 
 % Public Properties
 properties (Dependent = true)
-    FigDim, AxisBox
+    FigDim
+    AxisBox, AxisWidth
     XTick, XTickLabel
     YTick, YTickLabel
     ZTick, ZTickLabel
@@ -194,6 +196,15 @@ methods
         for k=1:cls.nrofa
             if k > size(AxisBoxCell,1); AxisBoxCell{k}=AxisBoxCell{end}; end
             set(cls.haxis(k), 'Box', AxisBoxCell{k});
+        end
+    end
+    function set.AxisWidth(cls, AxisWidth)
+        if iscell(AxisWidth)~=1, AxisWidthCell{1}=AxisWidth;
+        else AxisWidthCell = AxisWidth;
+        end
+        for k=1:cls.nrofa
+            if k > size(AxisWidth,1); AxisWidthCell{k}=AxisWidthCell{end}; end
+            set(cls.haxis(k), 'LineWidth', AxisWidthCell{k});
         end
     end
     function set.XTick(cls, XTick)
