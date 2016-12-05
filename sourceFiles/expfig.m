@@ -51,9 +51,8 @@ if isbitmap(options)
         if exist(strcat(pwd,'/plot/png'),'dir') == 0
             mkdir('plot/png');
         end
-        res = options.magnify * get(0, 'ScreenPixelsPerInch') / 25.4e-3;
-        imwrite(A,[options.name,'.png'],'ResolutionUnit','meter',...
-                                      'XResolution',res,'YResolution',res);
+        png_nam = ['plot/png/',options.name,'.png'];
+        imwrite(A,png_nam);
     end
     
     if options.bmp
@@ -136,7 +135,10 @@ if isvector(options)
             mkdir('plot/emf');
         end
         emf_nam = ['plot/emf/' options.name '.emf'];
+        set(fig,'Color','none'); set(fig,'InvertHardcopy','off');
         print(emf_nam,'-dmeta',sprintf('-r%d',600));
+        set(fig,'Color','white'); set(fig,'InvertHardcopy','on');
+%         https://jp.mathworks.com/matlabcentral/answers/103941-figure-axes
     end
     
     if options.fig
@@ -146,14 +148,6 @@ if isvector(options)
         fig_nam = ['plot/fig/' options.name '.fig'];
         saveas(fig,fig_nam,'fig');
     end
-    
-    if options.png
-        if exist(strcat(pwd,'/plot/png'),'dir') == 0
-            mkdir('plot/png');
-        end
-        png_nam = ['plot/png/' options.name '.png'];
-        saveas(fig,png_nam,'png');
-    end    
 end
 % https://wiki.iac.ethz.ch/IT/LinuxConvertFiles#Convert_Matlab_EPS_Files
 
