@@ -56,3 +56,11 @@ http://www.mathworks.com/help/matlab/graphics-object-properties.html
 Note: the toolbox was created and tested for typical eletrical and mechanical
 engineering graphics; some research fields may have very different publication
 figure requirements.
+
+# To Do list
+
+[] bodefig: generate level code for nice bode plots
+[] flex legend: more options to legend styles
+[] align subplot axis
+[] seperate default propoerties
+[] include pzmap from ohnishi
