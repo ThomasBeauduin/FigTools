@@ -42,7 +42,7 @@ function dest = eps2pdf(source, crop, gray, quality, gs_options)
     % Intialise the options string for ghostscript
     options = ['-q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dPDFSETTINGS=/prepress -sOutputFile="' dest '"'];
     % Set crop option
-    if nargin < 3 || crop
+    if nargin < 2 || crop
         options = [options ' -dEPSCrop'];
     end
     % Set the font path
@@ -51,7 +51,7 @@ function dest = eps2pdf(source, crop, gray, quality, gs_options)
         options = [options ' -sFONTPATH="' fp '"'];
     end
     % Set the grayscale option
-    if nargin > 4 && gray
+    if nargin > 2 && gray
         options = [options ' -sColorConversionStrategy=Gray -dProcessColorModel=/DeviceGray'];
     end
     % Set the bitmap quality

@@ -5,7 +5,7 @@ S.FigDim          = [20 14];
 S.FontSize        = 14;
 S.FontName        = 'Times New Roman';
 S.Interpreter     = 'latex';
-S.LineWidth       = 6;
+S.LineWidth       = 2.2;
 S.AxisBox         = 'on';
 S.AxisWidth       = 1.0;
 S.LegendBox       = 'on';
@@ -16,6 +16,7 @@ S.MinorGrid       = 'off';
 S.MinorTick       = 'on';
 S.TickDir         = 'in';
 %S.AxisColor      = [0 0 0];
+
 %% EXPFIG
 S.folder         = [];
 S.name           = 'exout';
