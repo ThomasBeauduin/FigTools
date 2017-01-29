@@ -13,7 +13,8 @@ properties (Dependent = true)
     % 1. Figure Properties
     FigDim
     % 2. Axis Properties
-    AxisBox, AxisWidth, Grid, MinorGrid
+    AxisBox, AxisWidth, AxisColor
+    Grid, MinorGrid
     XTick, XTickLabel, YTick, YTickLabel
     ZTick, ZTickLabel, TickDir, MinorTick
     % 3. Font Properties
@@ -124,6 +125,21 @@ methods
     end
     function AxisWidth = get.AxisWidth(cls)
         AxisWidth = get(cls.haxis(1), 'Width');
+    end
+    
+    % Axis Color
+    function set.AxisColor(cls, AxisColor)
+        if ~iscell(AxisColor), AxisColorCell{1} = AxisColor;
+        else AxisColorCell = AxisColor;
+        end
+        for k=1:length(cls.haxis)
+            if k > size(AxisColor,1); 
+                AxisColorCell{k} = AxisColorCell{end}; 
+            end
+            set(cls.haxis(k), 'XColor', AxisColorCell{k});
+            set(cls.haxis(k), 'YColor', AxisColorCell{k});
+            set(cls.haxis(k), 'ZColor', AxisColorCell{k});
+        end
     end
     
     % Axis Tick Direction
