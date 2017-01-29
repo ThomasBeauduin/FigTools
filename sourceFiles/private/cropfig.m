@@ -1,7 +1,7 @@
-function [A, vA, vB, bb_rel] = crop_borders(A, bcol, padding)
-%CROP_BORDERS Crop the borders of an image or stack of images
+function [A, vA, vB, bb_rel] = cropfig(A, bcol, padding)
+%CROPFIG Crop the borders of an image or stack of images
 %
-%   [B, vA, vB, bb_rel] = crop_borders(A, bcol, [padding])
+%   [B, vA, vB, bb_rel] = cropfig(A, bcol, [padding])
 %
 %IN:
 %   A - HxWxCxN stack of images.
