@@ -1,11 +1,10 @@
-function print2eps(name, fig, export_options, varargin)
+function name = print2eps(fig, padding, renderer)
 %PRINT2EPS  Prints figures to eps with improved line styles
 %
 % Examples:
-%   print2eps filename
-%   print2eps(filename, fig_handle)
-%   print2eps(filename, fig_handle, export_options)
-%   print2eps(filename, fig_handle, export_options, print_options)
+%   name = print2eps(fig_handle)
+%   name = print2eps(fig_handle, export_options)
+%   name = print2eps(fig_handle, export_options, print_options)
 %
 % This function saves a figure as an eps file, with two improvements over
 % MATLAB's print command. First, it improves the line style, making dashed
@@ -13,14 +12,14 @@ function print2eps(name, fig, export_options, varargin)
 % Secondly, it substitutes original font names back into the eps file,
 % where these have been changed by MATLAB, for up to 11 different fonts.
 %
-%IN:
+% IN:
 %   filename - string containing the name (optionally including full or
 %              relative path) of the file the figure is to be saved as. A
 %              ".eps" extension is added if not there already. If a path is
 %              not specified, the figure is saved in the current directory.
 %   fig_handle - The handle of the figure to be saved. Default: gcf().
 %   export_options - array or struct of optional scalar values:
-%       bb_padding - Scalar value of amount of padding to add to border around
+%       padding    - Scalar value of amount of padding to add to border around
 %                    the cropped image, in points (if >1) or percent (if <1).
 %                    Can be negative as well as positive; Default: 0
 %       crop       - Crop amount. Deafult: 0
@@ -28,99 +27,14 @@ function print2eps(name, fig, export_options, varargin)
 %       renderer   - Renderer used to generate bounding-box. Default: 'opengl'
 %   print_options - Additional parameter strings to be passed to the print command
 
-%{
 % Copyright (C) Oliver Woodford 2008-2014, Yair Altman 2015-
 
-% The idea of editing the EPS file to change line styles comes from Jiro
-% Doke's FIXPSLINESTYLE (fex id: 17928)
-% The idea of changing dash length with line width came from comments on
-% fex id: 5743, but the implementation is mine :)
-%}
-%{
-% 14/11/11: Fix a MATLAB bug rendering black or white text incorrectly.
-%           Thanks to Mathieu Morlighem for reporting the issue and
-%           obtaining a fix from TMW.
-% 08/12/11: Added ability to correct fonts. Several people have requested
-%           this at one time or another, and also pointed me to printeps
-%           (fex id: 7501), so thank you to them. My implementation (which
-%           was not inspired by printeps - I'd already had the idea for my
-%           approach) goes slightly further in that it allows multiple
-%           fonts to be swapped.
-% 14/12/11: Fix bug affecting font names containing spaces. Thanks to David
-%           Szwer for reporting the issue.
-% 25/01/12: Add a font not to be swapped. Thanks to Anna Rafferty and Adam
-%           Jackson for reporting the issue. Also fix a bug whereby using a
-%           font alias can lead to another font being swapped in.
-% 10/04/12: Make the font swapping case insensitive.
-% 26/10/12: Set PaperOrientation to portrait. Thanks to Michael Watts for
-%           reporting the issue.
-% 26/10/12: Fix issue to do with swapping fonts changing other fonts and
-%           sizes we don't want, due to listeners. Thanks to Malcolm Hudson
-%           for reporting the issue.
-% 22/03/13: Extend font swapping to axes labels. Thanks to Rasmus Ischebeck
-%           for reporting the issue.
-% 23/07/13: Bug fix to font swapping. Thanks to George for reporting the
-%           issue.
-% 13/08/13: Fix MATLAB feature of not exporting white lines correctly.
-%           Thanks to Sebastian Heßlinger for reporting it.
-% 24/02/15: Fix for Matlab R2014b bug (issue #31): LineWidths<0.75 are not
-%           set in the EPS (default line width is used)
-% 25/02/15: Fixed issue #32: BoundingBox problem caused uncropped EPS/PDF files
-% 05/03/15: Fixed issue #43: Inability to perform EPS file post-processing
-% 06/03/15: Improved image padding & cropping thanks to Oscar Hartogensis
-% 21/03/15: Fixed edge-case of missing handles having a 'FontName' property
-% 26/03/15: Attempt to fix issue #45: white lines in subplots do not print correctly
-% 27/03/15: Attempt to fix issue #44: white artifact lines appearing in patch exports
-% 30/03/15: Fixed issue #52: improved performance on HG2 (R2014b+)
-% 09/04/15: Comment blocks consolidation and minor code cleanup (no real code change)
-% 12/04/15: Fixed issue #56: bad cropping
-% 14/04/15: Workaround for issue #45: lines in image subplots are exported in invalid color
-% 07/07/15: Added option to avoid font-swapping in EPS/PDF
-% 07/07/15: Fixed issue #83: use numeric handles in HG1
-% 22/07/15: Fixed issue #91 (thanks to Carlos Moffat)
-% 28/09/15: Fixed issue #108 (thanks to JacobD10)
-% 01/11/15: Fixed issue #112: optional renderer for bounding-box computation (thanks to Jesús Pestana Puerta)
-%}
-
+    name = [tempname '.eps'];
     options = {'-loose'};
-    if nargin > 3
-        options = [options varargin];
-    elseif nargin < 3
-        export_options = 0;
-        if nargin < 2
-            fig = gcf();
-        end
-    end
+    options = [options renderer];
 
-    % Retrieve padding, crop & font-swap values
-    if isstruct(export_options)
-        try fontswap   = export_options.fontswap;    catch, fontswap = true;     end
-        try bb_crop    = export_options.crop;        catch, bb_crop = 0;         end
-        try bb_padding = export_options.bb_padding;  catch, bb_padding = 0;      end
-        try renderer   = export_options.rendererStr; catch, renderer = 'opengl'; end  % fix for issue #110
-        if renderer(1)~='-',  renderer = ['-' renderer];  end
-    else
-        if numel(export_options) > 2  % font-swapping
-            fontswap = export_options(3);
-        else
-            fontswap = true;
-        end
-        if numel(export_options) > 1  % cropping
-            bb_crop = export_options(2);
-        else
-            bb_crop = 0;  % scalar value, so use default bb_crop value of 0
-        end
-        if numel(export_options) > 0  % padding
-            bb_padding = export_options(1);
-        else
-            bb_padding = 0;
-        end
-        renderer = '-opengl';
-    end
-
-    % Construct the filename
-    if numel(name) < 5 || ~strcmpi(name(end-3:end), '.eps')
-        name = [name '.eps']; % Add the missing extension
+    if padding, bb_crop = true;  fontswap = true;
+    else        bb_crop = false; fontswap = false;
     end
 
     % Set paper size
@@ -377,7 +291,7 @@ function print2eps(name, fig, export_options, varargin)
 
     % Apply the bounding box padding & cropping, replacing Matlab's print()'s bounding box
     if bb_crop
-        % Calculate a new bounding box based on a bitmap print using crop_border.m
+        % Calculate a new bounding box based on a bitmap print
         % 1. Determine the Matlab BoundingBox and PageBoundingBox
         [s,e] = regexp(fstrm, '%%BoundingBox: [^%]*%%'); % location BB in eps file
         if numel(s)==2, s=s(2); e=e(2); end
@@ -389,10 +303,10 @@ function print2eps(name, fig, export_options, varargin)
         aa = fstrm(s+19:e-3); % dimensions bb - STEP1
         pagebb_matlab = cell2mat(textscan(aa,'%f32%f32%f32%f32'));  % dimensions bb - STEP2
 
-        % 2. Create a bitmap image and use crop_borders to create the relative
+        % 2. Create a bitmap image and use cropfig to create the relative
         %    bb with respect to the PageBoundingBox
         [A, bcol] = print2array(fig, 1, renderer);
-        [aa, aa, aa, bb_rel] = crop_borders(A, bcol, bb_padding);
+        [aa, aa, aa, bb_rel] = cropfig(A, [], padding);
 
         % 3. Calculate the new Bounding Box
         pagew = pagebb_matlab(3)-pagebb_matlab(1);
@@ -403,11 +317,11 @@ function print2eps(name, fig, export_options, varargin)
         bb_offset = (bb_new-bb_matlab) + [-1,-1,1,1];  % 1px margin so that cropping is not TOO tight
 
         % Apply the bounding box padding
-        if bb_padding
-            if abs(bb_padding)<1
-                bb_padding = round((mean([bb_new(3)-bb_new(1) bb_new(4)-bb_new(2)])*bb_padding)/0.5)*0.5; % ADJUST BB_PADDING
+        if padding
+            if abs(padding)<1
+                padding = round((mean([bb_new(3)-bb_new(1) bb_new(4)-bb_new(2)])*padding)/0.5)*0.5; % ADJUST BB_PADDING
             end
-            add_padding = @(n1, n2, n3, n4) sprintf(' %d', str2double({n1, n2, n3, n4}) + [-bb_padding -bb_padding bb_padding bb_padding] + bb_offset);
+            add_padding = @(n1, n2, n3, n4) sprintf(' %d', str2double({n1, n2, n3, n4}) + [-padding -padding padding padding] + bb_offset);
         else
             add_padding = @(n1, n2, n3, n4) sprintf(' %d', str2double({n1, n2, n3, n4}) + bb_offset); % fix small but noticeable bounding box shift
         end

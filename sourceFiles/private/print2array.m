@@ -78,7 +78,7 @@ function [A, bcol] = print2array(fig, res, renderer, gs_options)
         else
             tmp_eps = fullfile(fpath,[fname '.eps']);
         end
-        print2eps(tmp_eps, fig, 0, renderer, '-loose');
+        tmp_eps = print2eps(fig, 0, renderer);
         try
             % Initialize the command to export to tiff using ghostscript
             cmd_str = ['-dEPSCrop -q -dNOPAUSE -dBATCH ' res_str ' -sDEVICE=tiff24nc'];

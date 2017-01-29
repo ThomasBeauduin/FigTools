@@ -1,13 +1,11 @@
-function eps2pdf(source, dest, crop, append, gray, quality, gs_options)
+function dest = eps2pdf(source, crop, gray, quality, gs_options)
 %EPS2PDF  Convert an eps file to pdf format using ghostscript
 %
 % Examples:
-%   eps2pdf source dest
-%   eps2pdf(source, dest, crop)
-%   eps2pdf(source, dest, crop, append)
-%   eps2pdf(source, dest, crop, append, gray)
-%   eps2pdf(source, dest, crop, append, gray, quality)
-%   eps2pdf(source, dest, crop, append, gray, quality, gs_options)
+%   dest = eps2pdf(source, crop)
+%   dest = eps2pdf(source, crop, gray)
+%   dest = eps2pdf(source, crop, gray, quality)
+%   dest = eps2pdf(source, crop, gray, quality, gs_options)
 %
 % This function converts an eps file to pdf format. The output can be
 % optionally cropped and also converted to grayscale. If the output pdf
@@ -38,6 +36,9 @@ function eps2pdf(source, dest, crop, append, gray, quality, gs_options)
 
 % Copyright (C) Oliver Woodford 2009-2014, Yair Altman 2015-
 
+    dest = [tempname '.pdf'];
+    append = false;
+    
     % Intialise the options string for ghostscript
     options = ['-q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dPDFSETTINGS=/prepress -sOutputFile="' dest '"'];
     % Set crop option
