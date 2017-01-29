@@ -4,102 +4,64 @@ classdef pubfig < handle
 % Grabs excisting matlab figure class and creates pubfig class
 % figures with publication layout properties (see list).
 % Layout properties are displayed and can be easily adapted by user.
-% It can also export figures as publication quality image files. 
-% Currently, export tools for following formats are supported: 
-% Vector: EPS, PDF, EMF
-% Raster: PNG, BMP
 %
-% Author: Thomas Beauduin, The University of Tokyo, 2016
+% Author: Thomas Beauduin, The University of Tokyo, 2017
 
-% =============
-% Note: add style 'file' to input options so that the user
-% has his own set of defaultPropoerties(fig) with diff between
-% paper (tex.sty) and presentation (ppt.sty)
-% =============
-% Version: 1.0
-% additional work:
-%   * align multiplot axis labels
-%   * LineStyle settings
-%   * Latex Ticks
-%   * support for markers
-%   * grid style and width
-
-% Default Properties
-methods (Hidden, Access = private)
-    function setDefaultProperties(fig)
-        fig.FigDim          = [20 14];
-        fig.FontSize        = 14;
-        fig.FontName        = 'Times New Roman';
-        fig.Interpreter     = 'latex';
-        fig.LineWidth       = 2.2;
-        fig.AxisBox         = 'on';
-        fig.AxisWidth       = 1.5;
-        fig.LegendBox       = 'on';
-        fig.LegendLoc       = 'northeast';
-        fig.LegendOrient    = 'vertical';
-        fig.XMinorGrid      = 'off';
-        fig.YMinorGrid      = 'off';
-        fig.ZMinorGrid      = 'off';
-        fig.XGrid           = 'on';
-        fig.YGrid           = 'on';
-        fig.ZGrid           = 'on';
-        fig.XMinorTick      = 'on';
-        fig.YMinorTick      = 'on';
-        fig.ZMinorTick      = 'on';
-        fig.TickDir         = 'in';
-    end
-end
-
+%% CLASS PROPERTIES
 % Public Properties
 properties (Dependent = true)
+    % 1. Figure Properties
     FigDim
-    AxisBox, AxisWidth
-    XTick, XTickLabel
-    YTick, YTickLabel
-    ZTick, ZTickLabel
-    XMinorTick, YMinorTick, ZMinorTick, TickDir
+    % 2. Axis Properties
+    AxisBox, AxisWidth, Grid, MinorGrid
+    XTick, XTickLabel, YTick, YTickLabel
+    ZTick, ZTickLabel, TickDir, MinorTick
+    % 3. Font Properties
     FontName, FontSize, Interpreter
+    % 4. Line Properties
     LineWidth, LineStyle
+    %. 5. Legend Properties
     LegendBox, LegendLoc, LegendPos, LegendOrient
-    XGrid, XMinorGrid
-    YGrid, YMinorGrid
-    ZGrid, ZMinorGrid
-end
     
+end
+
 % Private Properties
 properties(Hidden, SetAccess = private)
-    hfig,                       % figure obj
-    haxis, nrofa                % axis obj
-    hleg                        % illustration obj
-    htext, nroft                % annotation obj
-    hplot, nrofp                % chart obj
-    hline, nrofl                % primitive line obj
-    htitle, hxlabel             % label obj
+    hfig                        % figure handle
+    haxis                       % axis handle
+    hleg                        % illustration handle
+    htext                       % annotation handle
+    hplot                       % chart handle
+    hline, nrofl                % primitive line handle
+    htitle, hxlabel             % label handle
     hylabel, hzlabel
 end
-    
+
+%% MAIN FUNCTION
 methods
-    function cls = pubfig(hfig)
-    cls.hfig = hfig;
-    if ~using_hg2(hfig)     % before 2014b
+    function cls = pubfig(varargin)
+
+    cls.hfig = varargin{1};
+    if nargin > 1, options = load(varargin{2});
+    else           options = load('figDefaultProperties.mat');
+    end
+    
+    if ~using_hg2(cls.hfig)     % before 2014b
         hAllAxis = findobj(cls.hfig,'type','axes');
         cls.hleg = findobj(hAllAxis,'tag','legend');
         cls.haxis = setdiff(hAllAxis,cls.hleg);
         hAllText = findobj(cls.hfig,'Type','Text');
         cls.htext = setdiff(hAllText,cls.hleg);
-    else                    % after 2014b
+    else                        % after 2014b
         cls.haxis = findobj(cls.hfig,'type','axes');
         cls.hleg = findobj(cls.hfig,'type','legend');
         cls.htext = findobj(cls.hfig,'Type','Text');
     end
-    cls.nrofa = length(cls.haxis);
-    cls.nroft = length(cls.htext);
     
-    for k=1:cls.nrofa       % axis data objects
-        cls.hplot = [cls.hplot;get(cls.haxis(k), 'Children')];
-        cls.nrofp(k) = length( get(cls.haxis(k), 'Children'));
-        cls.hline = [cls.hline;findobj(cls.haxis(k),'Type','Line')];
-        cls.nrofl(k) = length( findobj(cls.haxis(k),'Type','Line'));
+    for k=1:length(cls.haxis)   % axis data handles
+        cls.hplot = [cls.hplot; get(cls.haxis(k), 'Children')];
+        cls.hline = [cls.hline; findobj(cls.haxis(k),'Type','Line')];
+        cls.nrofl(k) = length(findobj(cls.haxis(k),'Type','Line'));
         cls.htitle(k) = get(cls.haxis(k), 'Title');
         cls.hxlabel(k) = get(cls.haxis(k), 'XLabel');
         cls.hylabel(k) = get(cls.haxis(k), 'YLabel');
@@ -107,12 +69,20 @@ methods
     end
     
     % set properties
-    cls.setDefaultProperties()
+    pn_vec = properties(cls);
+    fn_vec = fieldnames(options);
+    for i=1:length(fn_vec)
+        for j=1:length(pn_vec)
+            if strcmp(fn_vec{i},pn_vec{j})
+                cls.(fn_vec{i}) = options.(fn_vec{i});
+            end
+        end
+    end
     end
 end
 
 methods
-    % SET
+    %% FIGURE PROPERTIES
     function set.FigDim(cls, value)
         set(cls.hfig,'Units', 'centimeters');
         set(0,'Units','centimeters');
@@ -121,9 +91,185 @@ methods
         set(cls.hfig,'Position', [pos(1) pos(2) value(1) value(2)]);
         set(gcf,'color', [1, 1, 1]);
     end
+    function value = get.FigDim(cls)
+        pos = get(cls.haxis, 'Position'); 
+        value(1) = pos(3); value(2) = pos(4);
+    end
+    
+    
+    %% AXIS PROPERTIES
+    % Axis Containment Box
+    function set.AxisBox(cls, AxisBox)
+        if iscell(AxisBox) ~= 1, AxisBoxCell{1} = AxisBox;
+        else AxisBoxCell = AxisBox;
+        end
+        for k=1:length(cls.haxis)
+            if k > size(AxisBoxCell,1); AxisBoxCell{k} = AxisBoxCell{end}; end
+            set(cls.haxis(k), 'Box', AxisBoxCell{k});
+        end
+    end
+    function AxisBox = get.AxisBox(cls)
+        AxisBox = get(cls.haxis(1), 'Box'); 
+    end
+    
+    % Axis Line Width
+    function set.AxisWidth(cls, AxisWidth)
+        if iscell(AxisWidth) ~= 1, AxisWidthCell{1} = AxisWidth;
+        else AxisWidthCell = AxisWidth;
+        end
+        for k=1:length(cls.haxis)
+            if k > size(AxisWidth,1); AxisWidthCell{k} = AxisWidthCell{end}; end
+            set(cls.haxis(k), 'LineWidth', AxisWidthCell{k});
+        end
+    end
+    function AxisWidth = get.AxisWidth(cls)
+        AxisWidth = get(cls.haxis(1), 'Width');
+    end
+    
+    % Axis Tick Direction
+    function set.TickDir(cls,TickDir)
+        set(cls.haxis, 'TickDir',TickDir);
+    end
+    function TickDir = get.TickDir(cls)
+        TickDir = get(cls.haxis(1),'TickDir'); 
+    end
+    
+    % Axis all Dimensions Minor Tick
+    function set.MinorTick(cls,MinorTick)
+        set(cls.haxis, 'XMinorTick', MinorTick);
+        set(cls.haxis, 'YMinorTick', MinorTick);
+        set(cls.haxis, 'ZMinorTick', MinorTick);
+    end
+    function MinorTick = get.MinorTick(cls)
+        XMinorTick = get(cls.haxis(1), 'XMinorTick'); 
+        YMinorTick = get(cls.haxis(1), 'YMinorTick');
+        ZMinorTick = get(cls.haxis(1), 'ZMinorTick');
+        if XMinorTick || YMinorTick || ZMinorTick
+            MinorTick = 'on';
+        end
+    end
+    
+    % Axis all Dimensions Minor Grid
+    function set.MinorGrid(cls, MinorGrid)
+        if iscell(MinorGrid)~=1, MinorGridCell{1} = MinorGrid;
+        else                     MinorGridCell    = MinorGrid;
+        end
+        for k=1:length(cls.haxis)
+            if k > size(MinorGridCell,1)
+                MinorGridCell{k} = MinorGridCell{end}; 
+            end
+            set(cls.haxis(k), 'XMinorGrid', MinorGridCell{k});
+            set(cls.haxis(k), 'YMinorGrid', MinorGridCell{k});
+            set(cls.haxis(k), 'ZMinorGrid', MinorGridCell{k});
+        end
+    end
+    function MinorGrid = get.MinorGrid(cls)
+        XMinorGrid = get(cls.haxis(1),'XMinorGrid'); 
+        YMinorGrid = get(cls.haxis(1),'YMinorGrid');
+        ZMinorGrid = get(cls.haxis(1),'ZMinorGrid');
+        if XMinorGrid || YMinorGrid || ZMinorGrid
+            MinorGrid = 'on';
+        end
+    end
+    
+    % Axis all dimensions Grid
+    function set.Grid(cls, Grid)
+        if iscell(Grid)~=1, GridCell{1} = Grid;
+        else                GridCell    = Grid;
+        end
+        for k=1:length(cls.haxis)
+            if k > size(GridCell,1)
+                GridCell{k} = GridCell{end}; 
+            end
+            set(cls.haxis(k), 'XGrid', GridCell{k});
+            set(cls.haxis(k), 'YGrid', GridCell{k});
+            set(cls.haxis(k), 'ZGrid', GridCell{k});
+        end
+    end
+    function Grid = get.Grid(cls)
+        XGrid = get(cls.haxis(1),'XGrid'); 
+        YGrid = get(cls.haxis(1),'YGrid');
+        ZGrid = get(cls.haxis(1),'ZGrid');
+        if XGrid || YGrid || ZGrid
+            Grid = 'on';
+        end
+    end
+    
+    % Axis X Ticks Values and Label
+    function set.XTick(cls, XTick)
+        for k=1:length(cls.haxis)
+            set(cls.haxis(k),'XTick',XTick{k});
+        end
+    end
+    function XTick = get.XTick(cls)
+        XTick = get(cls.haxis, 'XTick'); 
+    end
+    function set.XTickLabel(cls, XTickLabel)
+        for k=1:length(cls.haxis)
+            set(cls.haxis(k),'XTickLabel',XTickLabel{k});
+        end
+    end
+    function XTickLabel = get.XTickLabel(cls)
+        XTickLabel=get(cls.haxis,'XTickLabel'); 
+    end
+    
+    % Axis Y Ticks Values and Label
+    function set.YTick(cls, YTick)
+        for k=1:length(cls.haxis)
+            if ~ischar(YTick{k})
+            set(cls.haxis(k),'YTick',YTick{k});
+            else
+                if strcmp('deg',YTick{k})||strcmp('rad',YTick{k})
+                    set(cls.haxis(k),'YTick',[-360,-270,-180,-90,0,90,180,270,360]);
+                    %cls.YTickLabel=YTick;
+                end
+            end
+        end
+    end
+    function YTick = get.YTick(cls)
+        YTick = get(cls.haxis, 'YTick'); 
+    end
+    function set.YTickLabel(cls,YTickLabel)
+        for k=1:length(cls.haxis)
+            set(cls.haxis(k),'YTickLabel',YTickLabel{k});
+            if strcmp('rad',YTickLabel{k})
+                %set(cls.haxis(k),'YTickLabel',{'$-\pi$','0','$\pi$','$\frac{1}{2}$'});
+                %['$-2\pi$','$-\frac{3}{2}\pi$','$-\pi$','$-\frac{1}{2}\pi$','$0$'...
+                %,'$\frac{1}{2}\pi$']);
+                % add a function to get latex interpreter in tick label
+                % reuse code of fomat_ticks for single axis
+                %format_ticks(gca,{'1','2'},{'$1$','$2\frac{1}{2}$','$9\frac{1}{2}$'});
+            end
+        end
+    end
+    function YTickLabel = get.YTickLabel(cls)
+        YTickLabel=get(cls.haxis,'YTickLabel'); 
+    end
+
+    % Axis Z Ticks Values and Label
+    function set.ZTick(cls, ZTick)
+        for k=1:length(cls.haxis)
+            set(cls.haxis(k),'ZTick',ZTick{k});
+        end
+    end
+    function ZTick = get.ZTick(cls)
+        ZTick = get(cls.haxis, 'ZTick'); 
+    end
+    function set.ZTickLabel(cls, ZTickLabel)
+        for k=1:length(cls.haxis)
+            set(cls.haxis(k),'ZTickLabel',ZTickLabel{k});
+        end
+    end
+    function ZTickLabel = get.ZTickLabel(cls)
+        ZTickLabel=get(cls.haxis,'ZTickLabel'); 
+    end
+    
+    
+    %% FONT PROPERTIES
+    % Font Type
     function set.FontName(cls, FontName)
         set(cls.hleg,'FontName', FontName);
-        for k=1:cls.nrofa
+        for k=1:length(cls.haxis)
             set(cls.htitle(k) , 'FontName', FontName);
             set(cls.hxlabel(k), 'FontName', FontName);
             set(cls.hylabel(k), 'FontName', FontName);
@@ -132,9 +278,14 @@ methods
         end
         set(cls.htext,'FontName', FontName);
     end
+    function FontName = get.FontName(cls)
+        FontName = get(cls.haxis(1),'FontName'); 
+    end
+    
+    % Font size (pt)
     function set.FontSize(cls, FontSize)
         set(cls.hleg,'FontSize',FontSize);
-        for k=1:cls.nrofa
+        for k=1:length(cls.haxis)
             set(cls.htitle(k) , 'FontSize', FontSize+1);
             set(cls.hxlabel(k), 'FontSize', FontSize);
             set(cls.hylabel(k), 'FontSize', FontSize);
@@ -143,6 +294,11 @@ methods
         end
         set(cls.htext,'FontSize',FontSize);
     end
+    function FontSize = get.FontSize(cls)
+        FontSize = get(cls.hxlabel(1),'FontSize'); 
+    end
+    
+    % String interpreterer
     function set.Interpreter(cls, Interpreter)
         lc1=get(cls.hleg,'string');     %hleg string is cell
         for k=1:length(lc1)
@@ -161,7 +317,7 @@ methods
                 end
             end
         end
-        for k=1:cls.nrofa
+        for k=1:length(cls.haxis)
             title=get(cls.htitle(k),'string');
             for j=1:size(title,1)
                 if isempty(strfind(title(j,:),'$')) == 0
@@ -189,87 +345,16 @@ methods
             end
         end
     end
-    function set.AxisBox(cls, AxisBox)
-        if iscell(AxisBox)~=1, AxisBoxCell{1}=AxisBox;
-        else AxisBoxCell = AxisBox;
-        end
-        for k=1:cls.nrofa
-            if k > size(AxisBoxCell,1); AxisBoxCell{k}=AxisBoxCell{end}; end
-            set(cls.haxis(k), 'Box', AxisBoxCell{k});
-        end
+    function Interpreter = get.Interpreter(cls)
+        Interpreter = get(cls.haxis(1),'Interpreter'); 
     end
-    function set.AxisWidth(cls, AxisWidth)
-        if iscell(AxisWidth)~=1, AxisWidthCell{1}=AxisWidth;
-        else AxisWidthCell = AxisWidth;
-        end
-        for k=1:cls.nrofa
-            if k > size(AxisWidth,1); AxisWidthCell{k}=AxisWidthCell{end}; end
-            set(cls.haxis(k), 'LineWidth', AxisWidthCell{k});
-        end
-    end
-    function set.XTick(cls, XTick)
-        try
-            for k=1:cls.nrofa
-                set(cls.haxis(k),'XTick',XTick{k});
-            end
-        catch
-        end
-    end
-    function set.YTick(cls, YTick)
-        for k=1:cls.nrofa
-            if ~ischar(YTick{k})
-            set(cls.haxis(k),'YTick',YTick{k});
-            else
-                if strcmp('deg',YTick{k})||strcmp('rad',YTick{k})
-                    set(cls.haxis(k),'YTick',[-360,-270,-180,-90,0,90,180,270,360]);
-                    %cls.YTickLabel=YTick;
-                end
-            end
-        end
-    end
-    function set.ZTick(cls, ZTick)
-        for k=1:cls.nrofa
-            set(cls.haxis(k),'ZTick',ZTick{k});
-        end
-    end
-    function set.XTickLabel(cls, XTickLabel)
-        for k=1:cls.nrofa
-            set(cls.haxis(k),'XTickLabel',XTickLabel{k});
-        end
-    end
-    function set.YTickLabel(cls,YTickLabel)
-        for k=1:cls.nrofa
-            set(cls.haxis(k),'YTickLabel',YTickLabel{k});
-            if strcmp('rad',YTickLabel{k})
-                %set(cls.haxis(k),'YTickLabel',{'$-\pi$','0','$\pi$','$\frac{1}{2}$'});
-                %['$-2\pi$','$-\frac{3}{2}\pi$','$-\pi$','$-\frac{1}{2}\pi$','$0$'...
-                %,'$\frac{1}{2}\pi$']);
-                % add a function to get latex interpreter in tick label
-                % reuse code of fomat_ticks for single axis
-                %format_ticks(gca,{'1','2'},{'$1$','$2\frac{1}{2}$','$9\frac{1}{2}$'});
-            end
-        end
-    end
-    function set.ZTickLabel(cls, ZTickLabel)
-        for k=1:cls.nrofa
-            set(cls.haxis(k),'ZTickLabel',ZTickLabel{k});
-        end
-    end
-    function set.XMinorTick(cls,XMinorTick)
-        set(cls.haxis,'XMinorTick',XMinorTick);
-    end
-    function set.YMinorTick(cls, YMinorTick)
-        set(cls.haxis, 'YMinorTick' , YMinorTick);
-    end
-    function set.ZMinorTick(cls, ZMinorTick)
-        set(cls.haxis, 'ZMinorTick',ZMinorTick);
-    end
-    function set.TickDir(cls,TickDir)
-        set(cls.haxis, 'TickDir',TickDir);
-    end
+
+        
+    %% LINE PROPERTIES
+    % Line Drawing Width
     function set.LineWidth(cls,LineWidth)
         tmp = 0;
-        for m=1:cls.nrofa
+        for m=1:length(cls.haxis)
             if m > size(LineWidth,1); LineWidth(m,:)=LineWidth(end,:); end
             for n=1:cls.nrofl(m)
                 if n > size(LineWidth,2); LineWidth(m,n)=LineWidth(m,end); end
@@ -278,9 +363,22 @@ methods
             tmp=tmp+n;
         end
     end
+    function LineStyle = get.LineStyle(cls)
+        tmp = 0;
+        for m=1:length(cls.haxis)
+            if cls.nrofl~=0
+                for n=1:cls.nrofl(m)
+                    LineStyle(m,n) = get(cls.hline(tmp+n),'LineStyle');
+                end
+                tmp=tmp+n;
+            end
+        end
+    end
+    
+    % Line Type
     function set.LineStyle(cls,LineStyle)
         tmp = 0;
-        for m=1:cls.nrofa
+        for m=1:length(cls.haxis)
             if m > size(LineStyle,1); LineStyle(m,:)=LineStyle(end,:); end
             for n=1:cls.nrofl(m)
                 if n > size(LineStyle,2); LineStyle(m,n)=LineStyle(m,end); end
@@ -292,11 +390,23 @@ methods
         % extension necessary: char <> double, typing '-.' will result 
         % in LineStyle(1)='-' and '.'
     end
-    function set.LegendBox(cls, LegendBox)
-            if ~isempty(cls.hleg)
-                set(cls.hleg, 'Box', LegendBox);
-            end
+    function LineWidth = get.LineWidth(cls)
+        LineWidth = cls.LineWidth; 
     end
+
+    
+    %% LEGEND PROPERTIES
+    % Legend Box line
+    function set.LegendBox(cls, LegendBox)
+        if ~isempty(cls.hleg)
+            set(cls.hleg, 'Box', LegendBox);
+        end
+    end
+    function LegendBox = get.LegendBox(cls), LegendBox = [];
+        if ~isempty(cls.hleg), LegendBox = get(cls.hleg, 'Box'); end
+    end
+    
+    % Legend Location
     function set.LegendLoc(cls, LegendLoc)
         if ~isempty(cls.hleg)
             if iscell(LegendLoc)
@@ -308,124 +418,32 @@ methods
             end
         end
     end
+    function LegendLoc = get.LegendLoc(cls), LegendLoc = [];
+        if ~isempty(cls.hleg), LegendLoc = get(cls.hleg, 'location'); end
+    end
+    
+    % Legend Position in figure
     function set.LegendPos(cls, LegendPos)
         if ~isempty(cls.hleg)
             set(cls.hleg, 'position', LegendPos);
         end
     end
+    function LegendPos = get.LegendPos(cls), LegendPos = [];
+        if ~isempty(cls.hleg), LegendPos = get(cls.hleg, 'position'); end
+    end
+    
+    % Legend Orientation
     function set.LegendOrient(cls, LegendOrient)
         if ~isempty(cls.hleg)
             set(cls.hleg, 'Orientation', LegendOrient);
-            set(cls.hleg,'FontSize',cls.FontSize);
+            set(cls.hleg,'FontSize', cls.FontSize);
         end
-    end
-    
-    function set.XGrid(cls, XGrid)
-        if iscell(XGrid)~=1,    XGridCell{1}=XGrid;
-        else                    XGridCell   =XGrid;
-        end
-        for k=1:cls.nrofa
-            if k > size(XGridCell,1); XGridCell{k}=XGridCell{end}; end
-            set(cls.haxis(k), 'XGrid',XGridCell{k});
-        end
-    end             
-    function set.YGrid(cls, YGrid)
-        if iscell(YGrid)~=1,    YGridCell{1}=YGrid;
-        else                    YGridCell   =YGrid;
-        end
-        for k=1:cls.nrofa
-            if k > size(YGridCell,1); YGridCell{k}=YGridCell{end}; end
-            set(cls.haxis(k), 'YGrid',YGridCell{k});
-        end
-    end
-    function set.ZGrid(cls, ZGrid)
-        if iscell(ZGrid)~=1,    ZGridCell{1}=ZGrid;
-        else                    ZGridCell   =ZGrid;
-        end
-        for k=1:cls.nrofa
-            if k > size(ZGridCell,1); ZGridCell{k}=ZGridCell{end}; end
-            set(cls.haxis(k), 'ZGrid',ZGridCell{k});
-        end
-    end
-    
-    function set.XMinorGrid(cls, XMinorGrid)
-        if iscell(XMinorGrid)~=1,   XMinorGridCell{1}=XMinorGrid;
-        else                        XMinorGridCell   =XMinorGrid;
-        end
-        for k=1:cls.nrofa
-            if k > size(XMinorGridCell,1); XMinorGridCell{k}=XMinorGridCell{end}; end
-            set(cls.haxis(k), 'XMinorGrid',XMinorGridCell{k});
-        end
-    end
-    function set.YMinorGrid(cls, YMinorGrid)
-        if iscell(YMinorGrid)~=1,   YMinorGridCell{1}=YMinorGrid;
-        else                        YMinorGridCell   =YMinorGrid;
-        end
-        for k=1:cls.nrofa
-            if k > size(YMinorGridCell,1); YMinorGridCell{k}=YMinorGridCell{end}; end
-            set(cls.haxis(k), 'YMinorGrid',YMinorGridCell{k});
-        end         
-    end
-    function set.ZMinorGrid(cls, ZMinorGrid)
-        if iscell(ZMinorGrid)~=1,   ZMinorGridCell{1}=ZMinorGrid;
-        else                        ZMinorGridCell   =ZMinorGrid;
-        end
-        for k=1:cls.nrofa
-            if k > size(ZMinorGridCell,1); ZMinorGridCell{k}=ZMinorGridCell{end}; end
-            set(cls.haxis(k), 'ZMinorGrid',ZMinorGridCell{k});
-        end           
-    end
-    
-    %%%%%%
-    % GET:
-    %%%%%%
-    function value = get.FigDim(cls)
-        pos=get(cls.haxis, 'Position'); 
-        value(1)=pos(3); value(2)=pos(4);
-    end
-    function AxisBox = get.AxisBox(cls), AxisBox = get(cls.haxis(1), 'Box'); end
-    function XTick = get.XTick(cls), XTick = get(cls.haxis, 'XTick'); end
-    function YTick = get.YTick(cls), YTick = get(cls.haxis, 'YTick'); end
-    function ZTick = get.ZTick(cls), ZTick = get(cls.haxis, 'ZTick'); end
-    function XTickLabel = get.XTickLabel(cls),XTickLabel=get(cls.haxis,'XTickLabel'); end
-    function YTickLabel = get.YTickLabel(cls),YTickLabel=get(cls.haxis,'YTickLabel'); end
-    function ZTickLabel = get.ZTickLabel(cls),ZTickLabel=get(cls.haxis,'ZTickLabel'); end
-    function XMinorTick = get.XMinorTick(cls),XMinorTick=get(cls.haxis(1),'XMinorTick'); end
-    function YMinorTick = get.YMinorTick(cls),YMinorTick=get(cls.haxis(1),'YMinorTick'); end
-    function ZMinorTick = get.ZMinorTick(cls),ZMinorTick=get(cls.haxis(1),'ZMinorTick'); end
-    function TickDir = get.TickDir(cls),TickDir = get(cls.haxis(1),'TickDir'); end
-    function FontSize = get.FontSize(cls), FontSize = get(cls.hxlabel(1),'FontSize'); end
-    function FontName = get.FontName(cls), FontName = get(cls.haxis(1),'FontName'); end
-    function Interpreter = get.Interpreter(cls), Interpreter = get(cls.haxis(1),'Interpreter'); end
-    function LineWidth = get.LineWidth(cls), LineWidth = cls.LineWidth; end
-    function XGrid = get.XGrid(cls), XGrid = get(cls.haxis(1),'XGrid'); end
-    function YGrid = get.YGrid(cls), YGrid = get(cls.haxis(1),'YGrid'); end
-    function ZGrid = get.ZGrid(cls), ZGrid = get(cls.haxis(1),'ZGrid'); end
-    function XMinorGrid = get.XMinorGrid(cls), XMinorGrid = get(cls.haxis(1),'XMinorGrid'); end
-    function YMinorGrid = get.YMinorGrid(cls), YMinorGrid = get(cls.haxis(1),'YMinorGrid'); end    
-    function ZMinorGrid = get.ZMinorGrid(cls), ZMinorGrid = get(cls.haxis(1),'ZMinorGrid'); end
-    function LegendBox = get.LegendBox(cls), LegendBox = [];
-            if ~isempty(cls.hleg), LegendBox = get(cls.hleg, 'Box'); end
-    end
-    function LegendLoc = get.LegendLoc(cls), LegendLoc = [];
-        if ~isempty(cls.hleg), LegendLoc = get(cls.hleg, 'location'); end
-    end
-    function LegendPos = get.LegendPos(cls), LegendPos = [];
-        if ~isempty(cls.hleg), LegendPos = get(cls.hleg, 'position'); end
     end
     function LegendOrient = get.LegendOrient(cls), LegendOrient = [];
         if ~isempty(cls.hleg), LegendOrient = get(cls.hleg, 'Orientation'); end
     end
-    function LineStyle = get.LineStyle(cls)
-        tmp = 0;
-        for m=1:cls.nrofa
-            if cls.nrofl~=0
-                for n=1:cls.nrofl(m)
-                    LineStyle(m,n) = get(cls.hline(tmp+n),'LineStyle');
-                end
-                tmp=tmp+n;
-            end
-        end
-    end
+     
 end
+
+
 end
