@@ -124,7 +124,7 @@ methods
         end
     end
     function AxisWidth = get.AxisWidth(cls)
-        AxisWidth = get(cls.haxis(1), 'Width');
+        AxisWidth = get(cls.haxis(1), 'LineWidth');
     end
     
     % Axis Color
@@ -139,6 +139,58 @@ methods
             set(cls.haxis(k), 'XColor', AxisColorCell{k});
             set(cls.haxis(k), 'YColor', AxisColorCell{k});
             set(cls.haxis(k), 'ZColor', AxisColorCell{k});
+        end
+    end
+    function AxisColor = get.AxisColor(cls)
+        AxisColor = get(cls.haxis(1), 'Color');
+    end
+    
+    % Axis Grid (all)
+    function set.Grid(cls, Grid)
+        if iscell(Grid)~=1, GridCell{1} = Grid;
+        else                GridCell    = Grid;
+        end
+        for k=1:length(cls.haxis)
+            if k > size(GridCell,1)
+                GridCell{k} = GridCell{end};
+            end
+            set(cls.haxis(k), 'XGrid', GridCell{k});
+            set(cls.haxis(k), 'YGrid', GridCell{k});
+            set(cls.haxis(k), 'ZGrid', GridCell{k});
+        end
+    end
+    function Grid = get.Grid(cls)
+        XGrid = get(cls.haxis(1),'XGrid');
+        YGrid = get(cls.haxis(1),'YGrid');
+        ZGrid = get(cls.haxis(1),'ZGrid');
+        if strcmp(XGrid,'on') || strcmp(YGrid,'on') || strcmp(ZGrid,'on')
+             Grid = 'on';
+        else Grid = 'off';
+        end
+    end
+    
+    % Axis Minor Grid (all)
+    function set.MinorGrid(cls, MinorGrid)
+        if iscell(MinorGrid)~=1, MinorGridCell{1} = MinorGrid;
+        else                     MinorGridCell    = MinorGrid;
+        end
+        for k=1:length(cls.haxis)
+            if k > size(MinorGridCell,1)
+                MinorGridCell{k} = MinorGridCell{end}; 
+            end
+            set(cls.haxis(k), 'XMinorGrid', MinorGridCell{k});
+            set(cls.haxis(k), 'YMinorGrid', MinorGridCell{k});
+            set(cls.haxis(k), 'ZMinorGrid', MinorGridCell{k});
+        end
+    end
+    function MinorGrid = get.MinorGrid(cls)
+        XMinorGrid = get(cls.haxis(1),'XMinorGrid'); 
+        YMinorGrid = get(cls.haxis(1),'YMinorGrid');
+        ZMinorGrid = get(cls.haxis(1),'ZMinorGrid');
+        if strcmp(XMinorGrid,'on') || ...
+           strcmp(YMinorGrid,'on') || ...
+           strcmp(ZMinorGrid,'on'), MinorGrid = 'on';
+        else                        MinorGrid = 'off';
         end
     end
     
@@ -160,57 +212,13 @@ methods
         XMinorTick = get(cls.haxis(1), 'XMinorTick'); 
         YMinorTick = get(cls.haxis(1), 'YMinorTick');
         ZMinorTick = get(cls.haxis(1), 'ZMinorTick');
-        if XMinorTick || YMinorTick || ZMinorTick
-            MinorTick = 'on';
+        if strcmp(XMinorTick,'on') || ...
+           strcmp(YMinorTick,'on') || ...
+           strcmp(ZMinorTick, 'on'), MinorTick = 'on';
+        else                         MinorTick = 'off';
         end
     end
-    
-    % Axis all Dimensions Minor Grid
-    function set.MinorGrid(cls, MinorGrid)
-        if iscell(MinorGrid)~=1, MinorGridCell{1} = MinorGrid;
-        else                     MinorGridCell    = MinorGrid;
-        end
-        for k=1:length(cls.haxis)
-            if k > size(MinorGridCell,1)
-                MinorGridCell{k} = MinorGridCell{end}; 
-            end
-            set(cls.haxis(k), 'XMinorGrid', MinorGridCell{k});
-            set(cls.haxis(k), 'YMinorGrid', MinorGridCell{k});
-            set(cls.haxis(k), 'ZMinorGrid', MinorGridCell{k});
-        end
-    end
-    function MinorGrid = get.MinorGrid(cls)
-        XMinorGrid = get(cls.haxis(1),'XMinorGrid'); 
-        YMinorGrid = get(cls.haxis(1),'YMinorGrid');
-        ZMinorGrid = get(cls.haxis(1),'ZMinorGrid');
-        if XMinorGrid || YMinorGrid || ZMinorGrid
-            MinorGrid = 'on';
-        end
-    end
-    
-    % Axis all dimensions Grid
-    function set.Grid(cls, Grid)
-        if iscell(Grid)~=1, GridCell{1} = Grid;
-        else                GridCell    = Grid;
-        end
-        for k=1:length(cls.haxis)
-            if k > size(GridCell,1)
-                GridCell{k} = GridCell{end}; 
-            end
-            set(cls.haxis(k), 'XGrid', GridCell{k});
-            set(cls.haxis(k), 'YGrid', GridCell{k});
-            set(cls.haxis(k), 'ZGrid', GridCell{k});
-        end
-    end
-    function Grid = get.Grid(cls)
-        XGrid = get(cls.haxis(1),'XGrid'); 
-        YGrid = get(cls.haxis(1),'YGrid');
-        ZGrid = get(cls.haxis(1),'ZGrid');
-        if XGrid || YGrid || ZGrid
-            Grid = 'on';
-        end
-    end
-    
+
     % Axis X Ticks Values and Label
     function set.XTick(cls, XTick)
         for k=1:length(cls.haxis)
@@ -321,13 +329,13 @@ methods
             lc2=lc1{k};                 %multi-axis = multi-cell
             if iscell(lc2)
                 for j=1:length(lc2)
-                    if isempty(strfind(lc2{j},'$')) == 0
+                    if ~isempty(strfind(lc2{j},'$'))
                             set(cls.hleg,'Interpreter','latex'); break
                     else    set(cls.hleg,'Interpreter',Interpreter);
                     end
                 end
             else
-                if isempty(strfind(lc2,'$')) == 0
+                if ~isempty(strfind(lc2,'$'))
                         set(cls.hleg,'Interpreter','latex'); break
                 else    set(cls.hleg,'Interpreter',Interpreter);
                 end
@@ -336,33 +344,33 @@ methods
         for k=1:length(cls.haxis)
             title=get(cls.htitle(k),'string');
             for j=1:size(title,1)
-                if isempty(strfind(title(j,:),'$')) == 0
+                if ~isempty(strfind(title(j,:),'$'))
                         set(cls.htitle(k), 'Interpreter','latex');
                 else    set(cls.htitle(k), 'Interpreter',Interpreter);
                 end
             end
-            if isempty(strfind(get(cls.hxlabel(k),'string'),'$')) == 0
+            if ~isempty(strfind(get(cls.hxlabel(k),'string'),'$'))
                     set(cls.hxlabel(k), 'Interpreter','latex');
             else    set(cls.hxlabel(k), 'Interpreter',Interpreter);
             end
-            if isempty(strfind(get(cls.hylabel(k),'string'),'$')) == 0
+            if ~isempty(strfind(get(cls.hylabel(k),'string'),'$'))
                     set(cls.hylabel(k), 'Interpreter','latex');
             else    set(cls.hylabel(k), 'Interpreter',Interpreter);
             end
-            if isempty(strfind(get(cls.hzlabel(k),'string'),'$')) == 0
+            if ~isempty(strfind(get(cls.hzlabel(k),'string'),'$'))
                     set(cls.hzlabel(k), 'Interpreter','latex');
             else    set(cls.hzlabel(k), 'Interpreter',Interpreter);
             end
         end
         for k=1:length(cls.htext)
-            if isempty(strfind(get(cls.htext(k),'string'),'$')) == 0
+            if ~isempty(strfind(get(cls.htext(k),'string'),'$'))
                     set(cls.htext(k), 'Interpreter','latex');
             else    set(cls.htext(k), 'Interpreter',Interpreter);
             end
         end
     end
     function Interpreter = get.Interpreter(cls)
-        Interpreter = get(cls.haxis(1),'Interpreter'); 
+        Interpreter = get(cls.hleg(1),'Interpreter'); 
     end
 
         
@@ -379,12 +387,12 @@ methods
             tmp=tmp+n;
         end
     end
-    function LineStyle = get.LineStyle(cls)
+    function LineWidth = get.LineWidth(cls)
         tmp = 0;
         for m=1:length(cls.haxis)
             if cls.nrofl~=0
                 for n=1:cls.nrofl(m)
-                    LineStyle(m,n) = get(cls.hline(tmp+n),'LineStyle');
+                    LineWidth(m,n) = get(cls.hline(tmp+n),'LineWidth');
                 end
                 tmp=tmp+n;
             end
@@ -406,8 +414,16 @@ methods
         % extension necessary: char <> double, typing '-.' will result 
         % in LineStyle(1)='-' and '.'
     end
-    function LineWidth = get.LineWidth(cls)
-        LineWidth = cls.LineWidth; 
+    function LineStyle = get.LineStyle(cls)
+        tmp = 0;
+        for m=1:length(cls.haxis)
+            if cls.nrofl~=0
+                for n=1:cls.nrofl(m)
+                    LineStyle(m,n) = get(cls.hline(tmp+n),'LineStyle');
+                end
+                tmp=tmp+n;
+            end
+        end
     end
 
     
