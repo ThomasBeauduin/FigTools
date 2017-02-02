@@ -47,13 +47,13 @@ methods
     else           options = load('figDefaultProperties.mat');
     end
     
-    if ~using_hg2(cls.hfig)     % before 2014b
+    if verLessThan('matlab','8.4')  % before 2014b
         hAllAxis = findobj(cls.hfig,'type','axes');
         cls.hleg = findobj(hAllAxis,'tag','legend');
         cls.haxis = setdiff(hAllAxis,cls.hleg);
         hAllText = findobj(cls.hfig,'Type','Text');
         cls.htext = setdiff(hAllText,cls.hleg);
-    else                        % after 2014b
+    else                            % after 2014b
         cls.haxis = findobj(cls.hfig,'type','axes');
         cls.hleg = findobj(cls.hfig,'type','legend');
         cls.htext = findobj(cls.hfig,'Type','Text');
