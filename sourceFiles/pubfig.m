@@ -20,7 +20,7 @@ properties (Dependent = true)
     % 3. Font Properties
     FontName, FontSize, Interpreter
     % 4. Line Properties
-    LineWidth, LineStyle
+    LineWidth, LineStyle, MarkerSize
     %. 5. Legend Properties
     LegendBox, LegendLoc, LegendPos, LegendOrient
     
@@ -310,7 +310,7 @@ methods
     function set.FontSize(cls, FontSize)
         set(cls.hleg,'FontSize',FontSize);
         for k=1:length(cls.haxis)
-            set(cls.htitle(k) , 'FontSize', FontSize+1);
+            set(cls.htitle(k) , 'FontSize', FontSize+1,'FontWeight','bold');
             set(cls.hxlabel(k), 'FontSize', FontSize);
             set(cls.hylabel(k), 'FontSize', FontSize);
             set(cls.hzlabel(k), 'FontSize', FontSize);
@@ -426,6 +426,30 @@ methods
         end
     end
 
+    % MarkerSize
+    function set.MarkerSize(cls,MarkerSize)
+        tmp = 0;
+        for m=1:length(cls.haxis)
+            if m > size(MarkerSize,1); MarkerSize(m,:)=MarkerSize(end,:); end
+            for n=1:cls.nrofl(m)
+                if n > size(MarkerSize,2); MarkerSize(m,n)=MarkerSize(m,end); end
+                set(cls.hline(tmp+n), 'MarkerSize' ,MarkerSize(m,n));
+            end
+            tmp=tmp+n;
+        end
+        %cls.MarkerSize = MarkerSize;
+    end
+    function MarkerSize = get.MarkerSize(cls)
+        tmp = 0;
+        for m=1:length(cls.haxis)
+            if cls.nrofl~=0
+                for n=1:cls.nrofl(m)
+                    MarkerSize(m,n) = get(cls.hline(tmp+n),'MarkerSize');
+                end
+                tmp=tmp+n;
+            end
+        end
+    end
     
     %% LEGEND PROPERTIES
     % Legend Box line
