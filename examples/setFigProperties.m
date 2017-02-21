@@ -15,7 +15,8 @@ S.Grid            = 'on';
 S.MinorGrid       = 'off';
 S.MinorTick       = 'on';
 S.TickDir         = 'in';
-S.AxisColor      = [0 0 0];
+S.AxisColor       = [0 0 0];
+S.MarkerSize      = 18;
 
 %% EXPFIG
 S.folder         = [];
