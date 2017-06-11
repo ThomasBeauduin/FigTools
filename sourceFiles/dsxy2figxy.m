@@ -23,13 +23,14 @@ function varargout = dsxy2figxy(varargin)
 
 % Obtain arguments (limited argument checking is done)
 % Determine if axes handle is specified
+%%%%%
 if length(varargin{1}) == 1 && ishandle(varargin{1}) ...
                             && strcmp(get(varargin{1},'type'),'axes')	
 	hAx = varargin{1};
 	varargin = varargin(2:end); % Remove arg 1 (axes handle)
 else
 	hAx = gca;
-end;
+end
 
 % Remaining args are either two point locations or a position vector
 if length(varargin) == 1        % Assume a 4-element position vector

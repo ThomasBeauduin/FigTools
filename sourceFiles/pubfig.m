@@ -222,7 +222,13 @@ methods
     % Axis X Ticks Values and Label
     function set.XTick(cls, XTick)
         for k=1:length(cls.haxis)
-            set(cls.haxis(k),'XTick',XTick{k});
+            if ~ischar(XTick{k})
+                set(cls.haxis(k),'XTick',XTick{k});
+            else
+                if strcmp('deg',XTick{k})
+                    set(cls.haxis(k),'XTick',[-360,-270,-180,-90,-45,0,45,90,180,270,360]);
+                end
+            end
         end
     end
     function XTick = get.XTick(cls)
@@ -241,7 +247,7 @@ methods
     function set.YTick(cls, YTick)
         for k=1:length(cls.haxis)
             if ~ischar(YTick{k})
-            set(cls.haxis(k),'YTick',YTick{k});
+                set(cls.haxis(k),'YTick',YTick{k});
             else
                 if strcmp('deg',YTick{k})||strcmp('rad',YTick{k})
                     set(cls.haxis(k),'YTick',[-360,-270,-180,-90,0,90,180,270,360]);
