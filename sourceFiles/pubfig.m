@@ -40,42 +40,42 @@ end
 
 %% MAIN FUNCTION
 methods
-    function cls = pubfig(varargin)
+    function obj = pubfig(varargin)
 
-    cls.hfig = varargin{1};
+    obj.hfig = varargin{1};
     if nargin > 1, options = load(varargin{2});
     else           options = load('figDefaultProperties.mat');
     end
     
     if verLessThan('matlab','8.4')  % before 2014b
-        hAllAxis = findobj(cls.hfig,'type','axes');
-        cls.hleg = findobj(hAllAxis,'tag','legend');
-        cls.haxis = setdiff(hAllAxis,cls.hleg);
-        hAllText = findobj(cls.hfig,'Type','Text');
-        cls.htext = setdiff(hAllText,cls.hleg);
+        hAllAxis = findobj(obj.hfig,'type','axes');
+        obj.hleg = findobj(hAllAxis,'tag','legend');
+        obj.haxis = setdiff(hAllAxis,obj.hleg);
+        hAllText = findobj(obj.hfig,'Type','Text');
+        obj.htext = setdiff(hAllText,obj.hleg);
     else                            % after 2014b
-        cls.haxis = findobj(cls.hfig,'type','axes');
-        cls.hleg = findobj(cls.hfig,'type','legend');
-        cls.htext = findobj(cls.hfig,'Type','Text');
+        obj.haxis = findobj(obj.hfig,'type','axes');
+        obj.hleg = findobj(obj.hfig,'type','legend');
+        obj.htext = findobj(obj.hfig,'Type','Text');
     end
     
-    for k=1:length(cls.haxis)   % axis data handles
-        cls.hplot = [cls.hplot; get(cls.haxis(k), 'Children')];
-        cls.hline = [cls.hline; findobj(cls.haxis(k),'Type','Line')];
-        cls.nrofl(k) = length(findobj(cls.haxis(k),'Type','Line'));
-        cls.htitle(k) = get(cls.haxis(k), 'Title');
-        cls.hxlabel(k) = get(cls.haxis(k), 'XLabel');
-        cls.hylabel(k) = get(cls.haxis(k), 'YLabel');
-        cls.hzlabel(k) = get(cls.haxis(k), 'ZLabel');
+    for k=1:length(obj.haxis)   % axis data handles
+        obj.hplot = [obj.hplot; get(obj.haxis(k), 'Children')];
+        obj.hline = [obj.hline; findobj(obj.haxis(k),'Type','Line')];
+        obj.nrofl(k) = length(findobj(obj.haxis(k),'Type','Line'));
+        obj.htitle(k) = get(obj.haxis(k), 'Title');
+        obj.hxlabel(k) = get(obj.haxis(k), 'XLabel');
+        obj.hylabel(k) = get(obj.haxis(k), 'YLabel');
+        obj.hzlabel(k) = get(obj.haxis(k), 'ZLabel');
     end
     
     % set properties
-    pn_vec = properties(cls);
+    pn_vec = properties(obj);
     fn_vec = fieldnames(options);
     for i=1:length(fn_vec)
         for j=1:length(pn_vec)
             if strcmp(fn_vec{i},pn_vec{j})
-                cls.(fn_vec{i}) = options.(fn_vec{i});
+                obj.(fn_vec{i}) = options.(fn_vec{i});
             end
         end
     end
@@ -84,85 +84,85 @@ end
 
 methods
     %% FIGURE PROPERTIES
-    function set.FigDim(cls, value)
-        set(cls.hfig,'Units', 'centimeters');
+    function set.FigDim(obj, value)
+        set(obj.hfig,'Units', 'centimeters');
         set(0,'Units','centimeters');
         monitor = get(0,'MonitorPositions');
         pos = [monitor(1,3)/2-value(1)/2, monitor(1,4)/2-value(2)*2/3];
-        set(cls.hfig,'Position', [pos(1) pos(2) value(1) value(2)]);
+        set(obj.hfig,'Position', [pos(1) pos(2) value(1) value(2)]);
         set(gcf,'color', [1, 1, 1]);
     end
-    function value = get.FigDim(cls)
-        pos = get(cls.haxis, 'Position'); 
+    function value = get.FigDim(obj)
+        pos = get(obj.haxis, 'Position'); 
         value(1) = pos(3); value(2) = pos(4);
     end
     
     
     %% AXIS PROPERTIES
     % Axis Containment Box
-    function set.AxisBox(cls, AxisBox)
+    function set.AxisBox(obj, AxisBox)
         if iscell(AxisBox) ~= 1, AxisBoxCell{1} = AxisBox;
         else AxisBoxCell = AxisBox;
         end
-        for k=1:length(cls.haxis)
+        for k=1:length(obj.haxis)
             if k > size(AxisBoxCell,1); AxisBoxCell{k} = AxisBoxCell{end}; end
-            set(cls.haxis(k), 'Box', AxisBoxCell{k});
+            set(obj.haxis(k), 'Box', AxisBoxCell{k});
         end
     end
-    function AxisBox = get.AxisBox(cls)
-        AxisBox = get(cls.haxis(1), 'Box'); 
+    function AxisBox = get.AxisBox(obj)
+        AxisBox = get(obj.haxis(1), 'Box'); 
     end
     
     % Axis Line Width
-    function set.AxisWidth(cls, AxisWidth)
+    function set.AxisWidth(obj, AxisWidth)
         if iscell(AxisWidth) ~= 1, AxisWidthCell{1} = AxisWidth;
         else AxisWidthCell = AxisWidth;
         end
-        for k=1:length(cls.haxis)
+        for k=1:length(obj.haxis)
             if k > size(AxisWidth,1); AxisWidthCell{k} = AxisWidthCell{end}; end
-            set(cls.haxis(k), 'LineWidth', AxisWidthCell{k});
+            set(obj.haxis(k), 'LineWidth', AxisWidthCell{k});
         end
     end
-    function AxisWidth = get.AxisWidth(cls)
-        AxisWidth = get(cls.haxis(1), 'LineWidth');
+    function AxisWidth = get.AxisWidth(obj)
+        AxisWidth = get(obj.haxis(1), 'LineWidth');
     end
     
     % Axis Color
-    function set.AxisColor(cls, AxisColor)
+    function set.AxisColor(obj, AxisColor)
         if ~iscell(AxisColor), AxisColorCell{1} = AxisColor;
         else AxisColorCell = AxisColor;
         end
-        for k=1:length(cls.haxis)
-            if k > size(AxisColor,1); 
+        for k=1:length(obj.haxis)
+            if k > size(AxisColor,1)
                 AxisColorCell{k} = AxisColorCell{end}; 
             end
-            set(cls.haxis(k), 'XColor', AxisColorCell{k});
-            set(cls.haxis(k), 'YColor', AxisColorCell{k});
-            set(cls.haxis(k), 'ZColor', AxisColorCell{k});
+            set(obj.haxis(k), 'XColor', AxisColorCell{k});
+            set(obj.haxis(k), 'YColor', AxisColorCell{k});
+            set(obj.haxis(k), 'ZColor', AxisColorCell{k});
         end
     end
-    function AxisColor = get.AxisColor(cls)
-        AxisColor = get(cls.haxis(1), 'Color');
+    function AxisColor = get.AxisColor(obj)
+        AxisColor = get(obj.haxis(1), 'Color');
     end
     
     % Axis Grid (all)
-    function set.Grid(cls, Grid)
+    function set.Grid(obj, Grid)
         if iscell(Grid)~=1, GridCell{1} = Grid;
         else                GridCell    = Grid;
         end
-        for k=1:length(cls.haxis)
+        for k=1:length(obj.haxis)
             if k > size(GridCell,1)
                 GridCell{k} = GridCell{end};
             end
-            set(cls.haxis(k), 'XGrid', GridCell{k});
-            set(cls.haxis(k), 'YGrid', GridCell{k});
-            set(cls.haxis(k), 'ZGrid', GridCell{k});
+            set(obj.haxis(k), 'XGrid', GridCell{k});
+            set(obj.haxis(k), 'YGrid', GridCell{k});
+            set(obj.haxis(k), 'ZGrid', GridCell{k});
         end
     end
-    function Grid = get.Grid(cls)
-        XGrid = get(cls.haxis(1),'XGrid');
-        YGrid = get(cls.haxis(1),'YGrid');
-        ZGrid = get(cls.haxis(1),'ZGrid');
+    function Grid = get.Grid(obj)
+        XGrid = get(obj.haxis(1),'XGrid');
+        YGrid = get(obj.haxis(1),'YGrid');
+        ZGrid = get(obj.haxis(1),'ZGrid');
         if strcmp(XGrid,'on') || strcmp(YGrid,'on') || strcmp(ZGrid,'on')
              Grid = 'on';
         else Grid = 'off';
@@ -170,23 +170,23 @@ methods
     end
     
     % Axis Minor Grid (all)
-    function set.MinorGrid(cls, MinorGrid)
+    function set.MinorGrid(obj, MinorGrid)
         if iscell(MinorGrid)~=1, MinorGridCell{1} = MinorGrid;
         else                     MinorGridCell    = MinorGrid;
         end
-        for k=1:length(cls.haxis)
+        for k=1:length(obj.haxis)
             if k > size(MinorGridCell,1)
                 MinorGridCell{k} = MinorGridCell{end}; 
             end
-            set(cls.haxis(k), 'XMinorGrid', MinorGridCell{k});
-            set(cls.haxis(k), 'YMinorGrid', MinorGridCell{k});
-            set(cls.haxis(k), 'ZMinorGrid', MinorGridCell{k});
+            set(obj.haxis(k), 'XMinorGrid', MinorGridCell{k});
+            set(obj.haxis(k), 'YMinorGrid', MinorGridCell{k});
+            set(obj.haxis(k), 'ZMinorGrid', MinorGridCell{k});
         end
     end
-    function MinorGrid = get.MinorGrid(cls)
-        XMinorGrid = get(cls.haxis(1),'XMinorGrid'); 
-        YMinorGrid = get(cls.haxis(1),'YMinorGrid');
-        ZMinorGrid = get(cls.haxis(1),'ZMinorGrid');
+    function MinorGrid = get.MinorGrid(obj)
+        XMinorGrid = get(obj.haxis(1),'XMinorGrid'); 
+        YMinorGrid = get(obj.haxis(1),'YMinorGrid');
+        ZMinorGrid = get(obj.haxis(1),'ZMinorGrid');
         if strcmp(XMinorGrid,'on') || ...
            strcmp(YMinorGrid,'on') || ...
            strcmp(ZMinorGrid,'on'), MinorGrid = 'on';
@@ -195,23 +195,23 @@ methods
     end
     
     % Axis Tick Direction
-    function set.TickDir(cls,TickDir)
-        set(cls.haxis, 'TickDir',TickDir);
+    function set.TickDir(obj,TickDir)
+        set(obj.haxis, 'TickDir',TickDir);
     end
-    function TickDir = get.TickDir(cls)
-        TickDir = get(cls.haxis(1),'TickDir'); 
+    function TickDir = get.TickDir(obj)
+        TickDir = get(obj.haxis(1),'TickDir'); 
     end
     
     % Axis all Dimensions Minor Tick
-    function set.MinorTick(cls,MinorTick)
-        set(cls.haxis, 'XMinorTick', MinorTick);
-        set(cls.haxis, 'YMinorTick', MinorTick);
-        set(cls.haxis, 'ZMinorTick', MinorTick);
+    function set.MinorTick(obj,MinorTick)
+        set(obj.haxis, 'XMinorTick', MinorTick);
+        set(obj.haxis, 'YMinorTick', MinorTick);
+        set(obj.haxis, 'ZMinorTick', MinorTick);
     end
-    function MinorTick = get.MinorTick(cls)
-        XMinorTick = get(cls.haxis(1), 'XMinorTick'); 
-        YMinorTick = get(cls.haxis(1), 'YMinorTick');
-        ZMinorTick = get(cls.haxis(1), 'ZMinorTick');
+    function MinorTick = get.MinorTick(obj)
+        XMinorTick = get(obj.haxis(1), 'XMinorTick'); 
+        YMinorTick = get(obj.haxis(1), 'YMinorTick');
+        ZMinorTick = get(obj.haxis(1), 'ZMinorTick');
         if strcmp(XMinorTick,'on') || ...
            strcmp(YMinorTick,'on') || ...
            strcmp(ZMinorTick, 'on'), MinorTick = 'on';
@@ -220,50 +220,50 @@ methods
     end
 
     % Axis X Ticks Values and Label
-    function set.XTick(cls, XTick)
-        for k=1:length(cls.haxis)
+    function set.XTick(obj, XTick)
+        for k=1:length(obj.haxis)
             if ~ischar(XTick{k})
-                set(cls.haxis(k),'XTick',XTick{k});
+                set(obj.haxis(k),'XTick',XTick{k});
             else
                 if strcmp('deg',XTick{k})
-                    set(cls.haxis(k),'XTick',[-360,-270,-180,-90,-45,0,45,90,180,270,360]);
+                    set(obj.haxis(k),'XTick',[-360,-270,-180,-90,-45,0,45,90,180,270,360]);
                 end
             end
         end
     end
-    function XTick = get.XTick(cls)
-        XTick = get(cls.haxis, 'XTick'); 
+    function XTick = get.XTick(obj)
+        XTick = get(obj.haxis, 'XTick'); 
     end
-    function set.XTickLabel(cls, XTickLabel)
-        for k=1:length(cls.haxis)
-            set(cls.haxis(k),'XTickLabel',XTickLabel{k});
+    function set.XTickLabel(obj, XTickLabel)
+        for k=1:length(obj.haxis)
+            set(obj.haxis(k),'XTickLabel',XTickLabel{k});
         end
     end
-    function XTickLabel = get.XTickLabel(cls)
-        XTickLabel=get(cls.haxis,'XTickLabel'); 
+    function XTickLabel = get.XTickLabel(obj)
+        XTickLabel=get(obj.haxis,'XTickLabel'); 
     end
     
     % Axis Y Ticks Values and Label
-    function set.YTick(cls, YTick)
-        for k=1:length(cls.haxis)
+    function set.YTick(obj, YTick)
+        for k=1:length(obj.haxis)
             if ~ischar(YTick{k})
-                set(cls.haxis(k),'YTick',YTick{k});
+                set(obj.haxis(k),'YTick',YTick{k});
             else
                 if strcmp('deg',YTick{k})||strcmp('rad',YTick{k})
-                    set(cls.haxis(k),'YTick',[-360,-270,-180,-90,0,90,180,270,360]);
-                    %cls.YTickLabel=YTick;
+                    set(obj.haxis(k),'YTick',[-360,-270,-180,-90,0,90,180,270,360]);
+                    %obj.YTickLabel=YTick;
                 end
             end
         end
     end
-    function YTick = get.YTick(cls)
-        YTick = get(cls.haxis, 'YTick'); 
+    function YTick = get.YTick(obj)
+        YTick = get(obj.haxis, 'YTick'); 
     end
-    function set.YTickLabel(cls,YTickLabel)
-        for k=1:length(cls.haxis)
-            set(cls.haxis(k),'YTickLabel',YTickLabel{k});
+    function set.YTickLabel(obj,YTickLabel)
+        for k=1:length(obj.haxis)
+            set(obj.haxis(k),'YTickLabel',YTickLabel{k});
             if strcmp('rad',YTickLabel{k})
-                %set(cls.haxis(k),'YTickLabel',{'$-\pi$','0','$\pi$','$\frac{1}{2}$'});
+                %set(obj.haxis(k),'YTickLabel',{'$-\pi$','0','$\pi$','$\frac{1}{2}$'});
                 %['$-2\pi$','$-\frac{3}{2}\pi$','$-\pi$','$-\frac{1}{2}\pi$','$0$'...
                 %,'$\frac{1}{2}\pi$']);
                 % add a function to get latex interpreter in tick label
@@ -272,133 +272,133 @@ methods
             end
         end
     end
-    function YTickLabel = get.YTickLabel(cls)
-        YTickLabel=get(cls.haxis,'YTickLabel'); 
+    function YTickLabel = get.YTickLabel(obj)
+        YTickLabel=get(obj.haxis,'YTickLabel'); 
     end
 
     % Axis Z Ticks Values and Label
-    function set.ZTick(cls, ZTick)
-        for k=1:length(cls.haxis)
-            set(cls.haxis(k),'ZTick',ZTick{k});
+    function set.ZTick(obj, ZTick)
+        for k=1:length(obj.haxis)
+            set(obj.haxis(k),'ZTick',ZTick{k});
         end
     end
-    function ZTick = get.ZTick(cls)
-        ZTick = get(cls.haxis, 'ZTick'); 
+    function ZTick = get.ZTick(obj)
+        ZTick = get(obj.haxis, 'ZTick'); 
     end
-    function set.ZTickLabel(cls, ZTickLabel)
-        for k=1:length(cls.haxis)
-            set(cls.haxis(k),'ZTickLabel',ZTickLabel{k});
+    function set.ZTickLabel(obj, ZTickLabel)
+        for k=1:length(obj.haxis)
+            set(obj.haxis(k),'ZTickLabel',ZTickLabel{k});
         end
     end
-    function ZTickLabel = get.ZTickLabel(cls)
-        ZTickLabel=get(cls.haxis,'ZTickLabel'); 
+    function ZTickLabel = get.ZTickLabel(obj)
+        ZTickLabel=get(obj.haxis,'ZTickLabel'); 
     end
     
     
     %% FONT PROPERTIES
     % Font Type
-    function set.FontName(cls, FontName)
-        set(cls.hleg,'FontName', FontName);
-        for k=1:length(cls.haxis)
-            set(cls.htitle(k) , 'FontName', FontName);
-            set(cls.hxlabel(k), 'FontName', FontName);
-            set(cls.hylabel(k), 'FontName', FontName);
-            set(cls.hzlabel(k), 'FontName', FontName);
-            set(cls.haxis(k)  , 'FontName', FontName);
+    function set.FontName(obj, FontName)
+        set(obj.hleg,'FontName', FontName);
+        for k=1:length(obj.haxis)
+            set(obj.htitle(k) , 'FontName', FontName);
+            set(obj.hxlabel(k), 'FontName', FontName);
+            set(obj.hylabel(k), 'FontName', FontName);
+            set(obj.hzlabel(k), 'FontName', FontName);
+            set(obj.haxis(k)  , 'FontName', FontName);
         end
-        set(cls.htext,'FontName', FontName);
+        set(obj.htext,'FontName', FontName);
     end
-    function FontName = get.FontName(cls)
-        FontName = get(cls.haxis(1),'FontName'); 
+    function FontName = get.FontName(obj)
+        FontName = get(obj.haxis(1),'FontName'); 
     end
     
     % Font size (pt)
-    function set.FontSize(cls, FontSize)
-        set(cls.hleg,'FontSize',FontSize);
-        for k=1:length(cls.haxis)
-            set(cls.htitle(k) , 'FontSize', FontSize+1,'FontWeight','bold');
-            set(cls.hxlabel(k), 'FontSize', FontSize);
-            set(cls.hylabel(k), 'FontSize', FontSize);
-            set(cls.hzlabel(k), 'FontSize', FontSize);
-            set(cls.haxis(k)  , 'FontSize', FontSize-1);
+    function set.FontSize(obj, FontSize)
+        set(obj.hleg,'FontSize',FontSize);
+        for k=1:length(obj.haxis)
+            set(obj.htitle(k) , 'FontSize', FontSize+1,'FontWeight','bold');
+            set(obj.hxlabel(k), 'FontSize', FontSize);
+            set(obj.hylabel(k), 'FontSize', FontSize);
+            set(obj.hzlabel(k), 'FontSize', FontSize);
+            set(obj.haxis(k)  , 'FontSize', FontSize-1);
         end
-        set(cls.htext,'FontSize',FontSize);
+        set(obj.htext,'FontSize',FontSize);
     end
-    function FontSize = get.FontSize(cls)
-        FontSize = get(cls.hxlabel(1),'FontSize'); 
+    function FontSize = get.FontSize(obj)
+        FontSize = get(obj.hxlabel(1),'FontSize'); 
     end
     
     % String interpreterer
-    function set.Interpreter(cls, Interpreter)
-        lc1=get(cls.hleg,'string');     %hleg string is cell
+    function set.Interpreter(obj, Interpreter)
+        lc1=get(obj.hleg,'string');     %hleg string is cell
         for k=1:length(lc1)
             lc2=lc1{k};                 %multi-axis = multi-cell
             if iscell(lc2)
                 for j=1:length(lc2)
                     if ~isempty(strfind(lc2{j},'$'))
-                            set(cls.hleg,'Interpreter','latex'); break
-                    else    set(cls.hleg,'Interpreter',Interpreter);
+                            set(obj.hleg,'Interpreter','latex'); break
+                    else    set(obj.hleg,'Interpreter',Interpreter);
                     end
                 end
             else
                 if ~isempty(strfind(lc2,'$'))
-                        set(cls.hleg,'Interpreter','latex'); break
-                else    set(cls.hleg,'Interpreter',Interpreter);
+                        set(obj.hleg,'Interpreter','latex'); break
+                else    set(obj.hleg,'Interpreter',Interpreter);
                 end
             end
         end
-        for k=1:length(cls.haxis)
-            title=get(cls.htitle(k),'string');
+        for k=1:length(obj.haxis)
+            title=get(obj.htitle(k),'string');
             for j=1:size(title,1)
                 if ~isempty(strfind(title(j,:),'$'))
-                        set(cls.htitle(k), 'Interpreter','latex');
-                else    set(cls.htitle(k), 'Interpreter',Interpreter);
+                        set(obj.htitle(k), 'Interpreter','latex');
+                else    set(obj.htitle(k), 'Interpreter',Interpreter);
                 end
             end
-            if ~isempty(strfind(get(cls.hxlabel(k),'string'),'$'))
-                    set(cls.hxlabel(k), 'Interpreter','latex');
-            else    set(cls.hxlabel(k), 'Interpreter',Interpreter);
+            if ~isempty(strfind(get(obj.hxlabel(k),'string'),'$'))
+                    set(obj.hxlabel(k), 'Interpreter','latex');
+            else    set(obj.hxlabel(k), 'Interpreter',Interpreter);
             end
-            if ~isempty(strfind(get(cls.hylabel(k),'string'),'$'))
-                    set(cls.hylabel(k), 'Interpreter','latex');
-            else    set(cls.hylabel(k), 'Interpreter',Interpreter);
+            if ~isempty(strfind(get(obj.hylabel(k),'string'),'$'))
+                    set(obj.hylabel(k), 'Interpreter','latex');
+            else    set(obj.hylabel(k), 'Interpreter',Interpreter);
             end
-            if ~isempty(strfind(get(cls.hzlabel(k),'string'),'$'))
-                    set(cls.hzlabel(k), 'Interpreter','latex');
-            else    set(cls.hzlabel(k), 'Interpreter',Interpreter);
+            if ~isempty(strfind(get(obj.hzlabel(k),'string'),'$'))
+                    set(obj.hzlabel(k), 'Interpreter','latex');
+            else    set(obj.hzlabel(k), 'Interpreter',Interpreter);
             end
         end
-        for k=1:length(cls.htext)
-            if ~isempty(strfind(get(cls.htext(k),'string'),'$'))
-                    set(cls.htext(k), 'Interpreter','latex');
-            else    set(cls.htext(k), 'Interpreter',Interpreter);
+        for k=1:length(obj.htext)
+            if ~isempty(strfind(get(obj.htext(k),'string'),'$'))
+                    set(obj.htext(k), 'Interpreter','latex');
+            else    set(obj.htext(k), 'Interpreter',Interpreter);
             end
         end
     end
-    function Interpreter = get.Interpreter(cls)
-        Interpreter = get(cls.hleg(1),'Interpreter'); 
+    function Interpreter = get.Interpreter(obj)
+        Interpreter = get(obj.hleg(1),'Interpreter'); 
     end
 
         
     %% LINE PROPERTIES
     % Line Drawing Width
-    function set.LineWidth(cls,LineWidth)
+    function set.LineWidth(obj,LineWidth)
         tmp = 0;
-        for m=1:length(cls.haxis)
+        for m=1:length(obj.haxis)
             if m > size(LineWidth,1); LineWidth(m,:)=LineWidth(end,:); end
-            for n=1:cls.nrofl(m)
+            for n=1:obj.nrofl(m)
                 if n > size(LineWidth,2); LineWidth(m,n)=LineWidth(m,end); end
-                set(cls.hline(tmp+n), 'LineWidth' ,LineWidth(m,n));
+                set(obj.hline(tmp+n), 'LineWidth' ,LineWidth(m,n));
             end
             tmp=tmp+n;
         end
     end
-    function LineWidth = get.LineWidth(cls)
+    function LineWidth = get.LineWidth(obj)
         tmp = 0;
-        for m=1:length(cls.haxis)
-            if cls.nrofl~=0
-                for n=1:cls.nrofl(m)
-                    LineWidth(m,n) = get(cls.hline(tmp+n),'LineWidth');
+        for m=1:length(obj.haxis)
+            if obj.nrofl~=0
+                for n=1:obj.nrofl(m)
+                    LineWidth(m,n) = get(obj.hline(tmp+n),'LineWidth');
                 end
                 tmp=tmp+n;
             end
@@ -406,26 +406,26 @@ methods
     end
     
     % Line Type
-    function set.LineStyle(cls,LineStyle)
+    function set.LineStyle(obj,LineStyle)
         tmp = 0;
-        for m=1:length(cls.haxis)
+        for m=1:length(obj.haxis)
             if m > size(LineStyle,1); LineStyle(m,:)=LineStyle(end,:); end
-            for n=1:cls.nrofl(m)
+            for n=1:obj.nrofl(m)
                 if n > size(LineStyle,2); LineStyle(m,n)=LineStyle(m,end); end
-                set(cls.hline(tmp+n), 'LineStyle' ,LineStyle(m,n));
+                set(obj.hline(tmp+n), 'LineStyle' ,LineStyle(m,n));
             end
             tmp=tmp+n;
         end
-        cls.LineStyle = LineStyle;
+        obj.LineStyle = LineStyle;
         % extension necessary: char <> double, typing '-.' will result 
         % in LineStyle(1)='-' and '.'
     end
-    function LineStyle = get.LineStyle(cls)
+    function LineStyle = get.LineStyle(obj)
         tmp = 0;
-        for m=1:length(cls.haxis)
-            if cls.nrofl~=0
-                for n=1:cls.nrofl(m)
-                    LineStyle(m,n) = get(cls.hline(tmp+n),'LineStyle');
+        for m=1:length(obj.haxis)
+            if obj.nrofl~=0
+                for n=1:obj.nrofl(m)
+                    LineStyle(m,n) = get(obj.hline(tmp+n),'LineStyle');
                 end
                 tmp=tmp+n;
             end
@@ -433,24 +433,24 @@ methods
     end
 
     % MarkerSize
-    function set.MarkerSize(cls,MarkerSize)
+    function set.MarkerSize(obj,MarkerSize)
         tmp = 0;
-        for m=1:length(cls.haxis)
+        for m=1:length(obj.haxis)
             if m > size(MarkerSize,1); MarkerSize(m,:)=MarkerSize(end,:); end
-            for n=1:cls.nrofl(m)
+            for n=1:obj.nrofl(m)
                 if n > size(MarkerSize,2); MarkerSize(m,n)=MarkerSize(m,end); end
-                set(cls.hline(tmp+n), 'MarkerSize' ,MarkerSize(m,n));
+                set(obj.hline(tmp+n), 'MarkerSize' ,MarkerSize(m,n));
             end
             tmp=tmp+n;
         end
-        %cls.MarkerSize = MarkerSize;
+        %obj.MarkerSize = MarkerSize;
     end
-    function MarkerSize = get.MarkerSize(cls)
+    function MarkerSize = get.MarkerSize(obj)
         tmp = 0;
-        for m=1:length(cls.haxis)
-            if cls.nrofl~=0
-                for n=1:cls.nrofl(m)
-                    MarkerSize(m,n) = get(cls.hline(tmp+n),'MarkerSize');
+        for m=1:length(obj.haxis)
+            if obj.nrofl~=0
+                for n=1:obj.nrofl(m)
+                    MarkerSize(m,n) = get(obj.hline(tmp+n),'MarkerSize');
                 end
                 tmp=tmp+n;
             end
@@ -459,50 +459,50 @@ methods
     
     %% LEGEND PROPERTIES
     % Legend Box line
-    function set.LegendBox(cls, LegendBox)
-        if ~isempty(cls.hleg)
-            set(cls.hleg, 'Box', LegendBox);
+    function set.LegendBox(obj, LegendBox)
+        if ~isempty(obj.hleg)
+            set(obj.hleg, 'Box', LegendBox);
         end
     end
-    function LegendBox = get.LegendBox(cls), LegendBox = [];
-        if ~isempty(cls.hleg), LegendBox = get(cls.hleg, 'Box'); end
+    function LegendBox = get.LegendBox(obj), LegendBox = [];
+        if ~isempty(obj.hleg), LegendBox = get(obj.hleg, 'Box'); end
     end
     
     % Legend Location
-    function set.LegendLoc(cls, LegendLoc)
-        if ~isempty(cls.hleg)
+    function set.LegendLoc(obj, LegendLoc)
+        if ~isempty(obj.hleg)
             if iscell(LegendLoc)
-                for k=1:length(cls.hleg)
-                    set(cls.hleg(k), 'location', LegendLoc{length(cls.hleg)+1-k});
+                for k=1:length(obj.hleg)
+                    set(obj.hleg(k), 'location', LegendLoc{length(obj.hleg)+1-k});
                 end
             else
-                set(cls.hleg, 'location', LegendLoc);
+                set(obj.hleg, 'location', LegendLoc);
             end
         end
     end
-    function LegendLoc = get.LegendLoc(cls), LegendLoc = [];
-        if ~isempty(cls.hleg), LegendLoc = get(cls.hleg, 'location'); end
+    function LegendLoc = get.LegendLoc(obj), LegendLoc = [];
+        if ~isempty(obj.hleg), LegendLoc = get(obj.hleg, 'location'); end
     end
     
     % Legend Position in figure
-    function set.LegendPos(cls, LegendPos)
-        if ~isempty(cls.hleg)
-            set(cls.hleg, 'position', LegendPos);
+    function set.LegendPos(obj, LegendPos)
+        if ~isempty(obj.hleg)
+            set(obj.hleg, 'position', LegendPos);
         end
     end
-    function LegendPos = get.LegendPos(cls), LegendPos = [];
-        if ~isempty(cls.hleg), LegendPos = get(cls.hleg, 'position'); end
+    function LegendPos = get.LegendPos(obj), LegendPos = [];
+        if ~isempty(obj.hleg), LegendPos = get(obj.hleg, 'position'); end
     end
     
     % Legend Orientation
-    function set.LegendOrient(cls, LegendOrient)
-        if ~isempty(cls.hleg)
-            set(cls.hleg, 'Orientation', LegendOrient);
-            set(cls.hleg,'FontSize', cls.FontSize);
+    function set.LegendOrient(obj, LegendOrient)
+        if ~isempty(obj.hleg)
+            set(obj.hleg, 'Orientation', LegendOrient);
+            set(obj.hleg,'FontSize', obj.FontSize);
         end
     end
-    function LegendOrient = get.LegendOrient(cls), LegendOrient = [];
-        if ~isempty(cls.hleg), LegendOrient = get(cls.hleg, 'Orientation'); end
+    function LegendOrient = get.LegendOrient(obj), LegendOrient = [];
+        if ~isempty(obj.hleg), LegendOrient = get(obj.hleg, 'Orientation'); end
     end
      
 end
