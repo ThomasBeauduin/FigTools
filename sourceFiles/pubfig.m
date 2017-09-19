@@ -93,7 +93,7 @@ methods
         set(gcf,'color', [1, 1, 1]);
     end
     function value = get.FigDim(obj)
-        pos = get(obj.haxis, 'Position'); 
+        pos = get(obj.hfig, 'Position'); 
         value(1) = pos(3); value(2) = pos(4);
     end
     

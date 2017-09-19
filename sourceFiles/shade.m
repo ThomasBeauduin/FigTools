@@ -23,6 +23,12 @@ function [ha hb hc] = shade(x, y1, y2, varargin)
 %   shaded area), HB is the handle to the first line (x vs y1), and HC is
 %   the handle to the second line (x vs y2).
 %%%%%
+% NOTES:
+% - should respect lin vs log
+% - add transparency option
+% - this is actually an extension of area, aka doesn't have to go 2 bottom
+%   of figure
+%%%%%
 
 if y1 == 0, y1 = zeros(length(x),1); end
 if y2 == 0, y2 = zeros(length(x),1); end
