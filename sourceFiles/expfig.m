@@ -90,7 +90,7 @@ if isvector(options)
         emf_nam = [fld_nam, filesep, options.name, '.emf'];
         
         set(hfig,'Color','none'); set(hfig,'InvertHardcopy','off');
-        print(emf_nam,'-dmeta',sprintf('-r%d',864));
+        print(emf_nam,'-dmeta','-painters',sprintf('-r%d',864));
         set(hfig,'Color','white'); set(hfig,'InvertHardcopy','on');
         file = [file; emf_nam];
     end
