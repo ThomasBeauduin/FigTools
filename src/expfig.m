@@ -22,7 +22,6 @@ set(hfig, 'InvertHardcopy', 'off');
 
 
 %% PART 1 - BITMAP
-% test transparent background color
 if isbitmap(options)
     switch options.renderer
         case 1,     renderer = '-opengl';

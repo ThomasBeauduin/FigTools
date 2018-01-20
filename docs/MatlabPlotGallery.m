@@ -11,7 +11,8 @@ for i=1:length(figs)
     [filepath,name,ext] = fileparts(filename);
     if strcmp(ext,'.m')
         run(filename);
-        pubfig(gcf);
+        pfig = pubfig(gcf);
+            pfig.Position = i;
         drawnow;
     end
 end

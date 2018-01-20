@@ -11,12 +11,12 @@ classdef pubfig < handle
 % Public Properties
 properties (Dependent = true)
     % 1. Figure Properties
-    FigDim
+    Dimension, Position
     % 2. Axis Properties
     AxisBox, AxisWidth, AxisColor
-    Grid, MinorGrid
-    XTick, XTickLabel, YTick, YTickLabel
-    ZTick, ZTickLabel, TickDir, MinorTick
+    Grid, XGrid, YGrid, ZGrid, MinorGrid
+    Tick, XTick, YTick, ZTick, MinorTick, TickDir
+    TickLabel, XTickLabel, YTickLabel, ZTickLabel
     % 3. Font Properties
     FontName, FontSize, Interpreter
     % 4. Line Properties
@@ -44,7 +44,7 @@ methods
 
     obj.hfig = varargin{1};
     if nargin > 1, options = load(varargin{2});
-    else           options = load('figDefaultProperties.mat');
+    else,          options = load('figDefaultProperties.mat');
     end
     
     if verLessThan('matlab','8.4')  % before 2014b
@@ -84,20 +84,53 @@ end
 
 methods
     %% FIGURE PROPERTIES
-    function set.FigDim(obj, value)
-        set(obj.hfig,'Units', 'centimeters');
-        set(0,'Units','centimeters');
-        monitor = get(0,'MonitorPositions');
-        pos = [monitor(1,3)/2-value(1)/2, monitor(1,4)/2-value(2)*2/3];
-        set(obj.hfig,'Position', [pos(1) pos(2) value(1) value(2)]);
-        set(gcf,'color', [1, 1, 1]);
+    % figure dimensions
+    function set.Dimension(obj, value)
+        if length(value) == 2
+            set(obj.hfig,'Units', 'centimeters');
+            pos = get(obj.hfig, 'Position');
+            pos(1:2) = pos(1:2)-(value-pos(3:4));
+            set(obj.hfig,'Position', [pos(1) pos(2) value(1) value(2)]);
+            set(gcf,'color',[1 1 1]);
+        elseif strcmp(value,'f') || strcmp(value,'full') %full-screen
+            set(0,'Units','centimeters');
+            monitor = get(0,'MonitorPositions');
+            set(obj.hfig,'Position', [0 0 monitor(3) monitor(4)]);
+        end
     end
-    function value = get.FigDim(obj)
+    function value = get.Dimension(obj)
         pos = get(obj.hfig, 'Position'); 
         value(1) = pos(3); value(2) = pos(4);
     end
     
-    
+    % figure position
+    function set.Position(obj, value)
+        if length(value) == 1           %tile figures
+            set(0,'Units','centimeters');
+            monitor = get(0,'MonitorPositions');
+            pos = [(value-1)*obj.Dimension(1) monitor(4)-obj.Dimension(2)-2.2];
+            while pos(1)+obj.Dimension(1) > monitor(3)
+                pos(2) = pos(2) - obj.Dimension(2);
+                pos(1) = pos(1) - floor(monitor(3)/obj.Dimension(1))*obj.Dimension(1);
+                if pos(2) < 0, pos(2) = monitor(4)-obj.Dimension(2)-2.2; end
+            end
+            set(obj.hfig,'Position', [pos(1) pos(2) obj.Dimension(1) obj.Dimension(2)]);
+        elseif length(value) == 2       %re-position
+            set(obj.hfig,'Position', [value(1) value(2) obj.Dimension(1) obj.Dimension(2)]);
+
+% SNAPPING: position to left/right or northeast/... -> change position & dimension
+%         elseif strcmp(value,'e') || strcmp(value,'east') ... %snap right/east
+%                || strcmp(value,'r') || strcmp(value,'right')
+%            %
+%         elseif strcmp(value,'w') || strcmp(value,'west') ... %snap right/east
+%                || strcmp(value,'l') || strcmp(value,'left')
+        end
+    end
+    function value = get.Position(obj)
+        pos = get(obj.hfig, 'Position'); 
+        value(1) = pos(1); value(2) = pos(2);
+    end
+        
     %% AXIS PROPERTIES
     % Axis Containment Box
     function set.AxisBox(obj, AxisBox)
