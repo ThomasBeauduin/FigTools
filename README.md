@@ -41,6 +41,10 @@ Automate the default calls for visual embellishment of the figure
 by calling the <code>pubfig</code> class with your own default visual settings.
 The <code>pubfig</code> class provides a simple and elegant object oriented 
 programming interface for manipulating publication figures.
+Please add you own version of **figDefaultProperties.mat** on the matlab path.
+```
+C:\Users\<username>\Documents\MATLAB
+```
 
 ## Export Figure
 
