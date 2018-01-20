@@ -1,8 +1,8 @@
 % Publication-Quality-Figures Toolbox
-% Version 8.1 (R2013a) 06-Aug-2016 
+% Version 3.0 (R2017a) 10-Oct-2017 
 % 
 % Step 1: Create Figures
-%   magnifyOnFig  - Magnification plot of 2d-lines in figure.
+%   magfig        - Magnification plot of 2d-lines in figure.
 %
 % Step 2: Publish Figures
 %   pubfig        - Class for publication figure objects.
