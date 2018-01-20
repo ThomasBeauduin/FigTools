@@ -34,4 +34,4 @@ S.padding        = 0.01;
 S.magnify        = 2;
 S.transparent    = false;
 
-save('prop','-struct','S');
+save('figDefaultProperties_old','-struct','S');
