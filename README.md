@@ -7,7 +7,7 @@ Publication-Quality-Figures Matlab Toolbox.
 Generating and exporting matlab figures for academic publication is a
 troublesome and time consuming task with a whole range of bug-prone
 <code>set</code> and <code>get</code> functions for the tiny - 
-but non-neglectable - details of figures in academic papers.
+but non-neglectable - details.  
 Firstly, this matlab toolbox aims to automate these visual tasks for a broad 
 range of figure types and styles. This includes the options to modify the 
 publication relevant aspects of axis, grids, linewidths, ... with minimal 
@@ -49,6 +49,9 @@ C:\Users\<username>\Documents\MATLAB
 ## Export Figure
 
 The goal is to export a plot from screen to document, just the way you see it!
+Both vector and bitmap images are supported, please see help file to list file-formats.
+Please note; vector graphics export are supported through an opne-source rendered; **Ghostscript**. 
+Make sure to download the latest stable version of Ghostscript to your drive.
 
 # Technical Details
 
