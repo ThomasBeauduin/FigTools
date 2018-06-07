@@ -110,7 +110,7 @@ methods
             monitor = get(0,'MonitorPositions');
             pos = [(value-1)*obj.Dimension(1) monitor(4)-obj.Dimension(2)-2.2];
             while pos(1)+obj.Dimension(1) > monitor(3)
-                pos(2) = pos(2) - obj.Dimension(2);
+                pos(2) = pos(2) - obj.Dimension(2)-2.2;
                 pos(1) = pos(1) - floor(monitor(3)/obj.Dimension(1))*obj.Dimension(1);
                 if pos(2) < 0, pos(2) = monitor(4)-obj.Dimension(2)-2.2; end
             end
@@ -514,17 +514,31 @@ methods
         end
     end
     function LegendLoc = get.LegendLoc(obj), LegendLoc = [];
-        if ~isempty(obj.hleg), LegendLoc = get(obj.hleg, 'location'); end
+        if ~isempty(obj.hleg)
+            for k=1:length(obj.hleg)
+                LegendLoc{length(obj.hleg)+1-k,1} = get(obj.hleg(k), 'location');
+            end
+        end
     end
     
     % Legend Position in figure
-    function set.LegendPos(obj, LegendPos)
+    function set.LegendPos(obj, value)
         if ~isempty(obj.hleg)
-            set(obj.hleg, 'position', LegendPos);
+            if iscell(value)
+                for k=1:length(obj.hleg)
+                    set(obj.hleg(k), 'position', value{length(obj.hleg)+1-k});
+                end
+            else
+                set(obj.hleg, 'location', value);
+            end
         end
     end
     function LegendPos = get.LegendPos(obj), LegendPos = [];
-        if ~isempty(obj.hleg), LegendPos = get(obj.hleg, 'position'); end
+        if ~isempty(obj.hleg)
+            for k=1:length(obj.hleg)
+                LegendPos{length(obj.hleg)+1-k,1} = get(obj.hleg(k), 'position'); 
+            end
+        end
     end
     
     % Legend Orientation

@@ -6,6 +6,7 @@
     [] magfig: code to magnify on figure
 
 ## **Publish** figures
+    [] reduce spacing between subfigures
     [] flex legend: more options to legend styles
     [] align subplot axis
     [] add property fig position
