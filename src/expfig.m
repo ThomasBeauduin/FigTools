@@ -105,6 +105,26 @@ if isvector(options)
     delete(eps_tmp); delete(pdf_tmp);
     
 end
+
+%% PART 3 - DRAWER
+if isdrawer(options)
+    if options.tex
+        fld_nam = [pwd,filesep,options.folder,filesep,'tex'];
+        if exist(fld_nam,'dir') == 0, mkdir(fld_nam); end
+        tex_nam = [fld_nam, filesep, options.name, '.tex'];
+        try 
+            cleanfigure();
+            matlab2tikz(tex_nam,'height','\fheight','width','\fwidth','showInfo',false);
+        catch ME
+            if ME.identifier == 'MATLAB:UndefinedFunction'
+                warning('You need matlab2tikz in your matlab path to specify tex option');
+            else
+                rethrow(ME)
+            end
+        end
+        file = [file; tex_nam];
+    end
+end
 end
 
 
@@ -129,6 +149,7 @@ switch lower(ext)
     case '.pdf', options.pdf = true;
     case '.emf', options.emf = true;
     case '.fig', options.fig = true;
+    case '.tex', options.tex = true;
 end
 
 % Options
@@ -146,6 +167,7 @@ for a = 2:nargin
             case 'bmp',     options.bmp = true;
             case 'emf',     options.emf = true;
             case 'fig',     options.fig = true;
+            case 'tex',     options.tex = true;
             case 'rgb',     options.grey = false;
             case 'grey',    options.grey = true;
             case 'gray',    options.grey = true;    
@@ -170,5 +192,9 @@ end
 
 function b = isbitmap(options)
     b = options.png || options.bmp;
+end
+
+function b = isdrawer(options)
+    b = options.tex;
 end
 
