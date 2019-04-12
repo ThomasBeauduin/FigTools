@@ -11,8 +11,9 @@ axis([0 2*pi -1.5 1.5])
 % Add title and axis labels
 title('Trigonometric Functions')
 xlabel('angle')
-ylabel('$\sin x$ and $\cos x$')
-legend('$\cos x$','$\sin x$')
+ylabel('sin$x$ and cos$x$')
+legend('cos$x$','sin$x$')
 % FigTools
+
 hfig = pubfig(hfig);
 expfig('exampleFigure','-tex',hfig);
