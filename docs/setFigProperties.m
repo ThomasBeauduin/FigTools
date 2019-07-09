@@ -33,6 +33,7 @@ S.eps            = false;
 S.png            = false;
 S.bmp            = false;
 S.emf            = false;
+S.tex            = false;
 S.fig            = true;
 S.grey           = false;
 S.padding        = 0.01;

@@ -1,0 +1,16 @@
+\usepackage{xkeyval}
+\usepackage{pgfplots}
+%
+\newlength\fheight
+\newlength\fwidth
+%
+\makeatletter
+\define@cmdkeys{figtools}[size@]{width, height}[60mm]
+\setkeys{figtools}{width,height}
+\newcommand{\figtools}[2][]{
+    \setkeys{figtools}{#1}
+    \setlength{\fheight}{\size@height}
+	\setlength{\fwidth}{\size@width}
+    \input{#2}
+}
+\makeatother
