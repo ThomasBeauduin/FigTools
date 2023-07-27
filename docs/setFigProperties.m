@@ -5,39 +5,39 @@
 
 
 %% PUBFIG
-S.Dimension       = [20 14];
-S.Position        = [1,1];
-S.FontSize        = 14;
+S.Dimension       = [8,6]; % [width,height]
+S.Position        = [0,0];
+S.FontSize        = 10;
 S.FontName        = 'Times New Roman';
 S.Interpreter     = 'latex';
-S.LineWidth       = 2.2;
+S.LineWidth       = 0.4;
 S.AxisBox         = 'on';
-S.AxisWidth       = 1.0;
+S.AxisWidth       = 0.4;
 S.LegendBox       = 'on';
 S.LegendLoc       = 'best';
 S.LegendOrient    = 'vertical';
-S.Grid            = 'on';
+S.Grid            = 'off';
 S.MinorGrid       = 'off';
 S.MinorTick       = 'on';
 S.TickDir         = 'in';
-S.AxisColor       = [0 0 0];
-S.MarkerSize      = 18;
+S.AxisColor       = [0,0,0];
+S.MarkerSize      = 4;
 
 %% EXPFIG
 S.folder         = [];
 S.name           = 'exout';
-S.crop           = true;
+S.crop           = 1;
 S.renderer       = 0; % 0:default, 1:OpenGL, 2:ZBuffer, 3:Painters
-S.pdf            = false;
-S.eps            = false;
-S.png            = false;
-S.bmp            = false;
-S.emf            = false;
-S.tex            = false;
-S.fig            = true;
-S.grey           = false;
-S.padding        = 0.01;
-S.magnify        = 2;
-S.transparent    = false;
+S.pdf            = 1;
+S.eps            = 0;
+S.png            = 0;
+S.bmp            = 0;
+S.emf            = 0;
+S.tex            = 0;
+S.fig            = 1;
+S.grey           = 0;
+S.padding        = 0;
+S.magnify        = 0;
+S.transparent    = 0;
 
 save('figDefaultProperties','-struct','S');
