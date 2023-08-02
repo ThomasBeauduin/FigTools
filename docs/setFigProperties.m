@@ -26,18 +26,20 @@ S.MarkerSize      = 4;
 %% EXPFIG
 S.folder         = [];
 S.name           = 'exout';
-S.crop           = 1;
 S.renderer       = 0; % 0:default, 1:OpenGL, 2:ZBuffer, 3:Painters
-S.pdf            = 1;
-S.eps            = 0;
-S.png            = 0;
-S.bmp            = 0;
-S.emf            = 0;
-S.tex            = 0;
-S.fig            = 1;
-S.grey           = 0;
-S.padding        = 0;
-S.magnify        = 0;
-S.transparent    = 0;
+S.magnify        = 1.00;
+S.padding        = 0.01;
+
+S.crop           = true;
+S.grey           = false;
+S.transparent    = false;
+
+S.fig            = true;
+S.pdf            = true;
+S.eps            = false;
+S.emf            = false;
+S.png            = false;
+S.bmp            = false;
+S.tex            = false;
 
 save('figDefaultProperties','-struct','S');
