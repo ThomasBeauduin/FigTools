@@ -27,7 +27,7 @@ S.MarkerSize      = 4;
 S.folder         = [];
 S.name           = 'exout';
 S.renderer       = 0; % 0:default, 1:OpenGL, 2:ZBuffer, 3:Painters
-S.magnify        = 1.00;
+S.magnify        = 10.0;
 S.padding        = 0.01;
 
 S.crop           = true;
