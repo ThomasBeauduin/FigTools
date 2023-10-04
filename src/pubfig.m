@@ -400,6 +400,7 @@ methods
                     set(obj.hzlabel(k), 'Interpreter','latex');
             else    set(obj.hzlabel(k), 'Interpreter',Interpreter);
             end
+            set(obj.haxis(k), 'TickLabelInterpreter',Interpreter);
         end
         for k=1:length(obj.htext)
             if ~isempty(strfind(get(obj.htext(k),'string'),'$'))
