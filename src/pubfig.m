@@ -389,15 +389,15 @@ methods
                 end
             end
             if ~isempty(strfind(get(obj.hxlabel(k),'string'),'$'))
-                    set(obj.hxlabel(k), 'Interpreter','latex');
+                    set(obj.hxlabel(k), 'Interpreter','latex');xtickformat('$%g$');
             else    set(obj.hxlabel(k), 'Interpreter',Interpreter);
             end
             if ~isempty(strfind(get(obj.hylabel(k),'string'),'$'))
-                    set(obj.hylabel(k), 'Interpreter','latex');
+                    set(obj.hylabel(k), 'Interpreter','latex');ytickformat('$%g$');
             else    set(obj.hylabel(k), 'Interpreter',Interpreter);
             end
             if ~isempty(strfind(get(obj.hzlabel(k),'string'),'$'))
-                    set(obj.hzlabel(k), 'Interpreter','latex');
+                    set(obj.hzlabel(k), 'Interpreter','latex');ztickformat('$%g$');
             else    set(obj.hzlabel(k), 'Interpreter',Interpreter);
             end
             set(obj.haxis(k), 'TickLabelInterpreter',Interpreter);
