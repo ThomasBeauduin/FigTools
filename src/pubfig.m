@@ -390,18 +390,20 @@ methods
             end
             if ~isempty(strfind(get(obj.hxlabel(k),'string'),'$'))
                     set(obj.hxlabel(k), 'Interpreter','latex');
-                    set(obj.haxis(k).XRuler, 'TickLabelFormat','$%g$');
             else    set(obj.hxlabel(k), 'Interpreter',Interpreter);
             end
             if ~isempty(strfind(get(obj.hylabel(k),'string'),'$'))
                     set(obj.hylabel(k), 'Interpreter','latex');
-                    set(obj.haxis(k).YRuler, 'TickLabelFormat','$%g$');
             else    set(obj.hylabel(k), 'Interpreter',Interpreter);
             end
             if ~isempty(strfind(get(obj.hzlabel(k),'string'),'$'))
                     set(obj.hzlabel(k), 'Interpreter','latex');
-                    set(obj.haxis(k).ZRuler, 'TickLabelFormat','$%g$');
             else    set(obj.hzlabel(k), 'Interpreter',Interpreter);
+            end
+            if strcmp(Interpreter,'latex')
+                set(obj.haxis(k).XRuler, 'TickLabelFormat','$%g$');
+                set(obj.haxis(k).YRuler, 'TickLabelFormat','$%g$');
+                set(obj.haxis(k).ZRuler, 'TickLabelFormat','$%g$');
             end
             set(obj.haxis(k), 'TickLabelInterpreter',Interpreter);
         end
