@@ -401,9 +401,9 @@ methods
             else    set(obj.hzlabel(k), 'Interpreter',Interpreter);
             end
             if strcmp(Interpreter,'latex')
-                set(obj.haxis(k).XRuler, 'TickLabelFormat','$%g$');
-                set(obj.haxis(k).YRuler, 'TickLabelFormat','$%g$');
-                set(obj.haxis(k).ZRuler, 'TickLabelFormat','$%g$');
+                set(obj.haxis(k).XRuler, 'TickLabelFormat',['$',obj.haxis(k).XRuler.TickLabelFormat,'$']);
+                set(obj.haxis(k).YRuler, 'TickLabelFormat',['$',obj.haxis(k).YRuler.TickLabelFormat,'$']);
+                set(obj.haxis(k).ZRuler, 'TickLabelFormat',['$',obj.haxis(k).ZRuler.TickLabelFormat,'$']);
             end
             set(obj.haxis(k), 'TickLabelInterpreter',Interpreter);
         end
