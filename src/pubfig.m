@@ -368,13 +368,13 @@ methods
             lc2=lc1{k};                 %multi-axis = multi-cell
             if iscell(lc2)
                 for j=1:length(lc2)
-                    if ~isempty(strfind(lc2{j},'$'))
+                    if contains(lc2{j},'$')
                             set(obj.hleg,'Interpreter','latex'); break
                     else    set(obj.hleg,'Interpreter',Interpreter);
                     end
                 end
             else
-                if ~isempty(strfind(lc2,'$'))
+                if contains(lc2,'$')
                         set(obj.hleg,'Interpreter','latex'); break
                 else    set(obj.hleg,'Interpreter',Interpreter);
                 end
@@ -383,32 +383,38 @@ methods
         for k=1:length(obj.haxis)
             title=get(obj.htitle(k),'string');
             for j=1:size(title,1)
-                if ~isempty(strfind(title(j,:),'$'))
+                if contains(title(j,:),'$')
                         set(obj.htitle(k), 'Interpreter','latex');
                 else    set(obj.htitle(k), 'Interpreter',Interpreter);
                 end
             end
-            if ~isempty(strfind(get(obj.hxlabel(k),'string'),'$'))
+            if contains(get(obj.hxlabel(k),'string'),'$')
                     set(obj.hxlabel(k), 'Interpreter','latex');
             else    set(obj.hxlabel(k), 'Interpreter',Interpreter);
             end
-            if ~isempty(strfind(get(obj.hylabel(k),'string'),'$'))
+            if contains(get(obj.hylabel(k),'string'),'$')
                     set(obj.hylabel(k), 'Interpreter','latex');
             else    set(obj.hylabel(k), 'Interpreter',Interpreter);
             end
-            if ~isempty(strfind(get(obj.hzlabel(k),'string'),'$'))
+            if contains(get(obj.hzlabel(k),'string'),'$')
                     set(obj.hzlabel(k), 'Interpreter','latex');
             else    set(obj.hzlabel(k), 'Interpreter',Interpreter);
             end
             if strcmp(Interpreter,'latex')
-                set(obj.haxis(k).XRuler, 'TickLabelFormat',['$',obj.haxis(k).XRuler.TickLabelFormat,'$']);
-                set(obj.haxis(k).YRuler, 'TickLabelFormat',['$',obj.haxis(k).YRuler.TickLabelFormat,'$']);
-                set(obj.haxis(k).ZRuler, 'TickLabelFormat',['$',obj.haxis(k).ZRuler.TickLabelFormat,'$']);
+                if isnumeric(obj.XTick)
+                    set(obj.haxis(k).XRuler, 'TickLabelFormat',['$',obj.haxis(k).XRuler.TickLabelFormat,'$']);
+                end
+                if isnumeric(obj.YTick)
+                    set(obj.haxis(k).YRuler, 'TickLabelFormat',['$',obj.haxis(k).YRuler.TickLabelFormat,'$']);
+                end
+                if isnumeric(obj.ZTick)
+                    set(obj.haxis(k).ZRuler, 'TickLabelFormat',['$',obj.haxis(k).ZRuler.TickLabelFormat,'$']);
+                end
             end
             set(obj.haxis(k), 'TickLabelInterpreter',Interpreter);
         end
         for k=1:length(obj.htext)
-            if ~isempty(strfind(get(obj.htext(k),'string'),'$'))
+            if contains(get(obj.htext(k),'string'),'$')
                     set(obj.htext(k), 'Interpreter','latex');
             else    set(obj.htext(k), 'Interpreter',Interpreter);
             end
