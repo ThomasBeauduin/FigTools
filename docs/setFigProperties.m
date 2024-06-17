@@ -1,20 +1,17 @@
-% make new properties .mat file
-
-% PLEASE ADD YOUR CUSTOM .MAT FILE TO YOUR OWN PATH !!!
-% EVERTIME YOU SYNC GITHUB YOU WILL LOSE THESE SETTINGS.
-
+%% INITIALISE
+close all;clear;clc;
 
 %% PUBFIG
 S.Dimension       = [8,6]; % [width,height]
 S.Position        = [0,0];
 S.FontSize        = 10;
-S.FontName        = 'Times New Roman';
+S.FontName        = 'Arial';
 S.Interpreter     = 'latex';
 S.LineWidth       = 0.4;
 S.AxisBox         = 'on';
 S.AxisWidth       = 0.4;
 S.LegendBox       = 'on';
-S.LegendLoc       = 'best';
+S.LegendLoc       = 'northeast';
 S.LegendOrient    = 'vertical';
 S.Grid            = 'off';
 S.MinorGrid       = 'off';
@@ -42,4 +39,5 @@ S.png            = false;
 S.bmp            = false;
 S.tex            = false;
 
-save('figDefaultProperties','-struct','S');
+%% SAVE
+save('figDefaultProperties.mat','-struct','S');
