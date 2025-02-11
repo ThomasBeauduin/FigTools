@@ -4,9 +4,9 @@ close all;clear;clc;
 %% PUBFIG
 S.Dimension       = [8,6]; % [width,height]
 S.Position        = [0,0];
-S.FontSize        = 10;
+S.FontSize        = 8;
 S.FontName        = 'Arial';
-S.Interpreter     = 'latex'; % 'none': w/o LaTeX
+S.Interpreter     = 'latex'; % 'latex': with LaTeX, 'none': w/o LaTeX
 S.LineWidth       = 0.4;
 S.AxisBox         = 'on';
 S.AxisWidth       = 0.4;

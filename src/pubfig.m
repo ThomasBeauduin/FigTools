@@ -349,11 +349,11 @@ methods
     function set.FontSize(obj, FontSize)
         set(obj.hleg,'FontSize',FontSize);
         for k=1:length(obj.haxis)
-            set(obj.htitle(k) , 'FontSize', FontSize+1,'FontWeight','bold');
+            set(obj.htitle(k) , 'FontSize', FontSize);
             set(obj.hxlabel(k), 'FontSize', FontSize);
             set(obj.hylabel(k), 'FontSize', FontSize);
             set(obj.hzlabel(k), 'FontSize', FontSize);
-            set(obj.haxis(k)  , 'FontSize', FontSize-1);
+            set(obj.haxis(k)  , 'FontSize', FontSize);
         end
         set(obj.htext,'FontSize',FontSize);
     end
