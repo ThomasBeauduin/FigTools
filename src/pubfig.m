@@ -384,39 +384,45 @@ methods
             title=get(obj.htitle(k),'string');
             for j=1:size(title,1)
                 if contains(title(j,:),'$')
-                        set(obj.htitle(k), 'Interpreter','latex');
-                else    set(obj.htitle(k), 'Interpreter',Interpreter);
+                        set(obj.htitle(k),'Interpreter','latex');
+                else    set(obj.htitle(k),'Interpreter',Interpreter);
                 end
             end
             if contains(get(obj.hxlabel(k),'string'),'$')
-                    set(obj.hxlabel(k), 'Interpreter','latex');
-            else    set(obj.hxlabel(k), 'Interpreter',Interpreter);
+                    set(obj.hxlabel(k),'Interpreter','latex');
+            else    set(obj.hxlabel(k),'Interpreter',Interpreter);
             end
             if contains(get(obj.hylabel(k),'string'),'$')
-                    set(obj.hylabel(k), 'Interpreter','latex');
-            else    set(obj.hylabel(k), 'Interpreter',Interpreter);
+                    set(obj.hylabel(k),'Interpreter','latex');
+            else    set(obj.hylabel(k),'Interpreter',Interpreter);
             end
             if contains(get(obj.hzlabel(k),'string'),'$')
-                    set(obj.hzlabel(k), 'Interpreter','latex');
-            else    set(obj.hzlabel(k), 'Interpreter',Interpreter);
+                    set(obj.hzlabel(k),'Interpreter','latex');
+            else    set(obj.hzlabel(k),'Interpreter',Interpreter);
             end
             if strcmp(Interpreter,'latex')
                 if isnumeric(get(obj.haxis(k),'XTick'))
-                    set(obj.haxis(k).XRuler, 'TickLabelFormat',['$',obj.haxis(k).XRuler.TickLabelFormat,'$']);
+                    for l = 1:length(obj.haxis(k).XAxis)
+                        set(obj.haxis(k).XAxis(l),'TickLabelFormat',['$',obj.haxis(k).XAxis(l).TickLabelFormat,'$']);
+                    end
                 end
                 if isnumeric(get(obj.haxis(k),'YTick'))
-                    set(obj.haxis(k).YRuler, 'TickLabelFormat',['$',obj.haxis(k).YRuler.TickLabelFormat,'$']);
+                    for l = 1:length(obj.haxis(k).YAxis)
+                        set(obj.haxis(k).YAxis(l),'TickLabelFormat',['$',obj.haxis(k).YAxis(l).TickLabelFormat,'$']);
+                    end
                 end
                 if isnumeric(get(obj.haxis(k),'ZTick'))
-                    set(obj.haxis(k).ZRuler, 'TickLabelFormat',['$',obj.haxis(k).ZRuler.TickLabelFormat,'$']);
+                    for l = 1:length(obj.haxis(k).ZAxis)
+                        set(obj.haxis(k).ZAxis(l),'TickLabelFormat',['$',obj.haxis(k).ZAxis(l).TickLabelFormat,'$']);
+                    end
                 end
             end
             set(obj.haxis(k), 'TickLabelInterpreter',Interpreter);
         end
         for k=1:length(obj.htext)
             if contains(get(obj.htext(k),'string'),'$')
-                    set(obj.htext(k), 'Interpreter','latex');
-            else    set(obj.htext(k), 'Interpreter',Interpreter);
+                    set(obj.htext(k),'Interpreter','latex');
+            else    set(obj.htext(k),'Interpreter',Interpreter);
             end
         end
     end
